@@ -13,26 +13,25 @@ public class NewBank {
 	}
 	
 	private void addTestData() {
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		customers.put("Bhagy", bhagy);
-		
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		customers.put("Christina", christina);
-		
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);
+		newCustomer("Bhagy", "1234", "Main", 1000.0);
+		newCustomer("Christina", "abcd", "Saving", 1500.0);
+		newCustomer("John","password", "Checking", 250.0);
 	}
 	
 	public static NewBank getBank() {
 		return bank;
 	}
-	
+
+	public synchronized boolean isCustomer(String userName){
+		return customers.containsKey(userName);
+	}
+
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
+			Customer customer = customers.get(userName);
+			if(customer.CheckPassword(password)) {
+				return new CustomerID(userName);
+			}
 		}
 		return null;
 	}
@@ -46,6 +45,12 @@ public class NewBank {
 			}
 		}
 		return "FAIL";
+	}
+
+	public synchronized void newCustomer(String customerName, String password, String accountName, double openingBalance){
+		Customer customer = new Customer(customerName, password);
+		customer.addAccount(new Account(accountName, openingBalance));
+		customers.put(customerName, customer);
 	}
 	
 	private String showMyAccounts(CustomerID customer) {

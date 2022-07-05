@@ -22,27 +22,43 @@ public class NewBankClientHandler extends Thread{
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customer = bank.checkLogInDetails(userName, password);
-			// if the user is authenticated then get requests from the user and process them 
-			if(customer != null) {
-				out.println("Log In Successful. What do you want to do?");
-				while(true) {
-					String request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
-					out.println(responce);
+			while (true){
+				// ask for user name
+				out.println("Enter Username");
+				String userName = in.readLine();
+				// ask for password
+				out.println("Enter Password");
+				String password = in.readLine();
+				out.println("Checking Details...");
+				// authenticate user and get customer ID token from bank for use in subsequent requests
+				if(bank.isCustomer(userName)){
+					CustomerID customer = bank.checkLogInDetails(userName, password);
+					// if the user is authenticated then get requests from the user and process them
+					if(customer != null) {
+						out.println("Log In Successful. What do you want to do?");
+						while(true) {
+							String request = in.readLine();
+							System.out.println("Request from " + customer.getKey());
+							String response = bank.processRequest(customer, request);
+							out.println(response);
+						}
+					}
+					else{
+						out.println("Incorrect password. Try again");
+					}
 				}
-			}
-			else {
-				out.println("Log In Failed");
+				else {
+					out.println("Username doesn't exist. Would you like to create an account with that name? (y/n)");
+					String request = in.readLine();
+					if (request.toLowerCase().equals("y")) {
+						out.println("Please enter the account name");
+						String accountName = in.readLine();
+						bank.newCustomer(userName, password, accountName, 0);
+						out.println("Success, please login with your new account");
+					} else {
+						out.println("Please try again");
+					}
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
