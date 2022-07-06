@@ -1,16 +1,17 @@
 package newbank.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Customer {
 	private String username;
 	private String password;
-	private ArrayList<Account> accounts;
+	private HashMap<String,Account> accounts;
 	
 	public Customer(String username, String password) {
 		this.username = username;
 		this.password = password;
-		accounts = new ArrayList<>();
+		accounts = new HashMap<>();
 	}
 
 	public String getUsername() {
@@ -23,13 +24,21 @@ public class Customer {
 
 	public String accountsToString() {
 		String s = "";
-		for(Account a : accounts) {
-			s += a.toString();
+		for(Account a : accounts.values()) {
+			s += a.toString() + "\n";
 		}
 		return s;
 	}
 
-	public void addAccount(Account account) {
-		accounts.add(account);		
+	public boolean hasAccount(String name){
+		return accounts.containsKey(name);
+	}
+
+	public boolean addAccount(Account account) {
+		if(hasAccount(account.getAccountName())){
+			return false;
+		}
+		accounts.put(account.getAccountName(), account);
+		return true;
 	}
 }
