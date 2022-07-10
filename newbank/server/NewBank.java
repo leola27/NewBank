@@ -55,6 +55,12 @@ public class NewBank {
 						}
 					}
 					return "FAIL";
+				case "REQUESTLOAN":
+					if(words.length == 2) {
+						double amountRequested = Double.parseDouble(words[1]);
+						return offerLoan(customer, amountRequested);
+					}
+					return "FAIL";
 			default : return "FAIL";
 			}
 		}
@@ -80,4 +86,13 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
+	private String offerLoan(CustomerID customer, Double amountRequested) {
+		double customerBalance = customers.get(customer.getKey()).getAccount("Main").getBalance();
+		double maxAmount = customerBalance * 3;
+		if(amountRequested > maxAmount) {
+			return "We can offer you up to £" + maxAmount;
+		}
+		customers.get(customer.getKey()).getAccount("Main").addBalance(amountRequested);
+		return amountRequested + " added to your account";
+	}
 }
