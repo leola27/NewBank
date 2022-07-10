@@ -41,4 +41,8 @@ public class Customer {
 		accounts.put(account.getAccountName(), account);
 		return true;
 	}
+
+	public Account getAccount(String accountName) {
+		return accounts.get(accountName);
+	}
 }
