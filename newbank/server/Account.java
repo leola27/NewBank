@@ -28,15 +28,15 @@ public class Account {
 		return (accountName + ": " + balance);
 	}
 
-  public double getBalance() {
-    return balance;
-  }
+	public double getBalance() {
+		return balance;
+	}
 
-  public void deposit(double amount) {
-    balance += amount;
-  }
+	public void deposit(double amount) {
+		balance += amount;
+	}
 
-  public void withdraw(double amount) {
-    balance -= amount;
-  }
+	public void withdraw(double amount) {
+		balance -= amount;
+	}
 }
