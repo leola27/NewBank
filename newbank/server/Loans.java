@@ -12,7 +12,7 @@ public class Loans {
         if (amountRequested >= maxAmount) {
             return "We can offer you up to £" + maxAmount;
         }
-        customer.getAccount("Main").addBalance(amountRequested);
+        customer.getAccount("Main").deposit(amountRequested);
         return amountRequested + " added to your account";
     }
 }

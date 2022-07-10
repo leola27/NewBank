@@ -5,13 +5,11 @@ import newbank.server.Customer.Customer;
 public class Account {
 
 	private String accountName;
-	private double openingBalance;
-	private double currentBalance;
+	private double balance;
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
-		this.openingBalance = openingBalance;
-		this.currentBalance = openingBalance;
+		this.balance = openingBalance;
 	}
 
 	public synchronized String newAccount(Customer customer, String accountName) {
@@ -26,19 +24,19 @@ public class Account {
 		return accountName;
 	}
 
-	public double getBalance() {return currentBalance;}
-
-	public void addBalance(double amount) {
-		currentBalance += amount;
-//		currentBalance = currentBalance + amount;
-	}
-
 	public String toString() {
-		return (accountName + ": " + openingBalance);
+		return (accountName + ": " + balance);
 	}
 
+  public double getBalance() {
+    return balance;
+  }
 
+  public void deposit(double amount) {
+    balance += amount;
+  }
 
-
-
+  public void withdraw(double amount) {
+    balance -= amount;
+  }
 }
