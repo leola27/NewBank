@@ -1,6 +1,7 @@
 package newbank.server;
 
 import newbank.server.Customer.Customer;
+import newbank.server.sqlite.connect.net.sqlitetutorial.Connect;
 import newbank.server.Customer.CustomerID;
 
 import java.io.BufferedReader;
@@ -24,9 +25,12 @@ public class NewBankClientHandler extends Thread{
 	public void run() {
 		// keep getting requests from the client and processing them
 		try {
+
 			while (true){
 				// ask for user name
 				out.println("Enter Username");
+				Connect connection = new Connect();
+				connection.connect();
 				String userName = in.readLine();
 				// ask for password
 				out.println("Enter Password");
