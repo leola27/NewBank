@@ -8,7 +8,7 @@ public class Customer {
 	private String username;
 	private String password;
 	private HashMap<String, Account> accounts;
-	
+
 	public Customer(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -59,8 +59,5 @@ public class Customer {
 	public Account getAccount(String accountName) {
 		return accounts.get(accountName);
 	}
-
-
-
 
 }

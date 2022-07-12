@@ -18,8 +18,8 @@ public class NewBank {
 
 	private void addTestData() {
 		customers.put("Bhagy", new Customer("Bhagy", "1234", "Main", 1000.0));
-		customers.put("Christina", new Customer("Christina", "abcd", "Saving", 1500.0));
-		customers.put("John", new Customer("John","password", "Checking", 250.0));
+		customers.put("Christina", new Customer("Christina", "abcd", "Main", 1500.0));
+		customers.put("John", new Customer("John", "password", "Main", 250.0));
 	}
 
 	public static NewBank getBank() {
@@ -51,6 +51,7 @@ public class NewBank {
 				case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 				case "NEWACCOUNT": return accountCreationReview(words, customer);
 				case "REQUESTLOAN": return loanReview(words, customer);
+				case "PAY": return pay(words, customer);
 //					return initialiseOfferLoan(words, customer);
 				default : return "FAIL";
 			}
@@ -82,5 +83,30 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
+	private String pay(String[] words, CustomerID customer) {
+		try {
+			String receivingCustomer = words[1];
+			double amount = Double.parseDouble(words[2]);
+
+			Customer sender = customers.get(customer.getKey());
+			Customer receiver = customers.get(receivingCustomer);
+
+			if (sender.hasAccount("Main") && receiver.hasAccount("Main")) {
+				Account senderMain = sender.getAccount("Main");
+				Account receiverMain = receiver.getAccount("Main");
+
+				if (senderMain.getBalance() >= amount) {
+					senderMain.withdraw(amount);
+					receiverMain.deposit(amount);
+
+					return "SUCCESS";
+				}
+			}
+		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		return "FAIL";
+	}
 
 }
