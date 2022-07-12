@@ -12,7 +12,6 @@ public class Loans {
         if (amountRequested >= maxAmount) {
             return "We can offer you up to £" + maxAmount;
         }
-        System.out.println("adding balance");
         customer.getAccount("Main").addBalance(amountRequested);
         return amountRequested + " added to your account";
     }
