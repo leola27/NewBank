@@ -17,20 +17,13 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		newCustomer("Bhagy", "1234", "Main", 1000.0);
-		newCustomer("Christina", "abcd", "Main", 1500.0);
-		newCustomer("John","password", "Main", 250.0);
+		customers.put("Bhagy", new Customer("Bhagy", "1234", "Main", 1000.0));
+		customers.put("Christina", new Customer("Christina", "abcd", "MainMain", 1500.0));
+		customers.put("John", new Customer("John", "password", "Main", 250.0));
 	}
 
 	public static NewBank getBank() {
 		return bank;
-	}
-
-	public synchronized void newCustomer(String customerName, String password, String accountName,
-		double openingBalance) {
-		Customer customer = new Customer(customerName, password);
-		customer.addAccount(new Account(accountName, openingBalance));
-		customers.put(customerName, customer);
 	}
 
 	public synchronized boolean isCustomer(String userName){
