@@ -18,7 +18,7 @@ public class NewBank {
 
 	private void addTestData() {
 		customers.put("Bhagy", new Customer("Bhagy", "1234", "Main", 1000.0));
-		customers.put("Christina", new Customer("Christina", "abcd", "MainMain", 1500.0));
+		customers.put("Christina", new Customer("Christina", "abcd", "Main", 1500.0));
 		customers.put("John", new Customer("John", "password", "Main", 250.0));
 	}
 
@@ -83,7 +83,7 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
-  private String pay(String[] words, CustomerID customer) {
+	private String pay(String[] words, CustomerID customer) {
 		try {
 			String receivingCustomer = words[1];
 			double amount = Double.parseDouble(words[2]);
@@ -106,7 +106,7 @@ public class NewBank {
 			e.printStackTrace();
 		}
 
-    return "FAIL";
-  }
+		return "FAIL";
+	}
 
 }
