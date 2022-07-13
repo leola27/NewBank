@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/sqlite/connect/connect.iml" filepath="$PROJECT_DIR$/sqlite/connect/connect.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqlite/db/db.iml" filepath="$PROJECT_DIR$/sqlite/db/db.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqlite/connect/net/net.iml" filepath="$PROJECT_DIR$/sqlite/connect/net/net.iml" />
       <module fileurl="file://$PROJECT_DIR$/server.iml" filepath="$PROJECT_DIR$/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqlite/sqlite.iml" filepath="$PROJECT_DIR$/sqlite/sqlite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sqlite/connect/net/sqlitetutorial/sqlitetutorial.iml" filepath="$PROJECT_DIR$/sqlite/connect/net/sqlitetutorial/sqlitetutorial.iml" />
     </modules>
   </component>
 </project>
