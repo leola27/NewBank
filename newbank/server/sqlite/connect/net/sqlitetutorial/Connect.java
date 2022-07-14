@@ -21,11 +21,11 @@ public class Connect
             Statement stmt = conn.createStatement();
 
             System.out.println("Connection to SQLite has been established.");
-            ResultSet rs = stmt.executeQuery("select  * from albums limit 5");
-            while (rs.next()) {
-                String name = rs.getString("title");
-                System.out.println(name);
-            }
+            //ResultSet rs = stmt.executeQuery("select  * from albums limit 5");
+//            while (rs.next()) {
+//                String name = rs.getString("title");
+//                System.out.println(name);
+//            }
 
         } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
