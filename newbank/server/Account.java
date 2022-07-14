@@ -29,12 +29,7 @@ public class Account {
 	public String toString() {
 		return (accountName + ": " + balance);
 	}
-	
 
-
-	public double getBalance1(){
-		return balance ;
-	}
 
 	public void setBalance(double newBalance) {
    		this.balance = newBalance;
