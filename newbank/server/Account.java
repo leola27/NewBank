@@ -1,5 +1,5 @@
 package newbank.server;
-
+import java.lang.Exception;
 import newbank.server.Customer.Customer;
 
 public class Account {
@@ -32,7 +32,7 @@ public class Account {
 	
 
 
-	public double getBalance(){
+	public double getBalance1(){
 		return balance ;
 	}
 
@@ -40,15 +40,15 @@ public class Account {
    		this.balance = newBalance;
 	}
 
-	private void checkPositiveAmount(double amount) { throws NegativeAmountException 
+	private void checkPositiveAmount(double amount) throws Exception {
   		if (amount < 0) {
-   		throw new NegativeAmountException("Unable to process negative amount: " + amount);
+   		throw new Exception("Unable to process negative amount: " + amount);
 	 }
 	}
 
-	private void checkSufficientFunds(double amount) {
-  		if (balance.compareTo(amount) < 0) {
-    		throw new InsufficientBalanceException("Not enough funds to withdraw: " + amount);
+	private void checkSufficientFunds(double amount) throws Exception {
+  		if (balance < amount) {
+    		throw new Exception("Not enough funds to withdraw: " + amount);
   	 }
 	}
 
