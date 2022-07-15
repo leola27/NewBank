@@ -1,0 +1,4 @@
+# the compiled .class files should not be comitted
+*.class
+# the .idea folder should not be comitted
+*.idea
