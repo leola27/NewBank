@@ -1,7 +1,7 @@
 package newbank.server;
 
 import newbank.server.Customer.Customer;
-import newbank.server.sqlite.connect.net.sqlitetutorial.Connect;
+import newbank.server.sqlite.connect.net.src.Connect;
 import newbank.server.Customer.CustomerID;
 
 import java.io.BufferedReader;
