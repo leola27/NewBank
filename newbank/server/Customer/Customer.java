@@ -1,6 +1,7 @@
 package newbank.server.Customer;
 
 import newbank.server.Account;
+import newbank.server.Loans;
 
 import java.util.HashMap;
 
@@ -9,6 +10,7 @@ public class Customer {
 	private String password;
 	private HashMap<String, Account> accounts;
 
+	private Loans loan;
 	public Customer(String username, String password) {
 		this.username = username;
 		this.password = password;
@@ -53,6 +55,37 @@ public class Customer {
 			return false;
 		}
 		accounts.put(account.getAccountName(), account);
+		return true;
+	}
+
+	public boolean addLoad(double amountRequested){
+		double maxAmount = getAccount("Main").getBalance() * 3;
+		if (amountRequested >= maxAmount) {
+			return false;
+		}
+		getAccount("Main").deposit(amountRequested);
+		loan = new Loans(amountRequested);
+		return true;
+	}
+
+	public String loanHistory(){
+		if(loan == null){
+			return "You did not take any loan";
+		}
+		return loan.loanHistory();
+	}
+
+	public boolean repayLoan(double amount){
+		if(loan == null){
+			return false;
+		}
+		Account main = getAccount("Main");
+		if(main.getBalance() < amount ||
+				loan.getLoanBalance() < amount){
+			return false;
+		}
+		main.withdraw(amount);
+		loan.repay(amount);
 		return true;
 	}
 

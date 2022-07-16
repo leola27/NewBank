@@ -3,16 +3,37 @@ package newbank.server;
 import newbank.server.Customer.Customer;
 
 public class Loans {
-
-    public Loans() {
+    private double loanAmount;
+    private double loanPaid;
+    public Loans(double loanAmount) {
+        this.loanAmount = loanAmount;
+        this.loanPaid = 0;
     }
 
-    public String offerLoan(double amountRequested, Customer customer) {
-        double maxAmount = customer.getAccount("Main").getBalance() * 3;
-        if (amountRequested >= maxAmount) {
-            return "We can offer you up to £" + maxAmount;
-        }
-        customer.getAccount("Main").deposit(amountRequested);
-        return amountRequested + " added to your account";
+    public double getLoanAmount(){
+        return loanAmount;
     }
+
+    public double getLoanPaid(){
+        return loanPaid;
+    }
+
+    public void repay(double amount){
+        loanPaid += amount;
+    }
+
+    public void addLoan(double amount){
+        loanAmount += amount;
+    }
+
+    public double getLoanBalance() {
+        return loanAmount - loanPaid;
+    }
+
+    public String loanHistory(){
+        return "Loan amount: " + loanAmount + "\nPaid: " + loanPaid + "\nRemaining balance: " + getLoanBalance();
+    }
+
+
+
 }
