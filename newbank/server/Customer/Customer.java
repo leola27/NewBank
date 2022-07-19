@@ -1,4 +1,5 @@
 package newbank.server.Customer;
+import newbank.server.sqlite.connect.net.src.Connect;
 
 import newbank.server.Account;
 import newbank.server.Loans;
@@ -9,6 +10,7 @@ public class Customer {
 	private String username;
 	private String password;
 	private HashMap<String, Account> accounts;
+	Connect connection = new Connect();
 
 	private Loans loan;
 	public Customer(String username, String password) {
@@ -44,6 +46,13 @@ public class Customer {
 			s += a.toString() + "\n";
 		}
 		return s;
+	}
+
+	public void addNewCustomerToDb(String userName, String Password)
+	{
+
+		connection.connectInsert("INSERT INTO CUSTOMERS (NAME,PASSWORD) VALUES (\""+username+"\",\""+password+"\")", userName);
+
 	}
 
 	public boolean hasAccount(String name){

@@ -11,6 +11,7 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
 	Connect connection = new Connect();
+	private boolean isValidCustomer;
 
 	private NewBank() {
 		customers = new HashMap<>();
@@ -28,20 +29,24 @@ public class NewBank {
 	}
 
 	//public synchronized boolean isCustomer(String userName)
-	public boolean isCustomer(String userName)
+	public boolean isValidCustomerCheck(String userName)
 	{
-		String result = connection.connect("SELECT NAME FROM CUSTOMERS WHERE NAME=",userName,"Name");
-		return Objects.nonNull(result);
+		String query="SELECT NAME FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
+		String result = connection.connectSelect(query,"Name");
+		isValidCustomer= Objects.nonNull(result);
+		return isValidCustomer;
 	}
 
 	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword)
 	{
-		String passwordFromDb = connection.connect("SELECT PASSWORD FROM CUSTOMERS WHERE NAME=",userName,"Password");
-		if (passwordFromDb.equals(givenPassword))
+		if (isValidCustomer)
 		{
-			return new CustomerID(userName);
+			String query="SELECT PASSWORD FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
+			String passwordFromDb = connection.connectSelect(query,  "Password");
+			if (passwordFromDb.equals(givenPassword)) {
+				return new CustomerID(userName);
+			}
 		}
-
 		//if(customers.containsKey(userName)) {
 			//Customer customer = customers.get(userName);
 			//if(customer.CheckPassword(password)) {
@@ -53,7 +58,8 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		if(customers.containsKey(customer.getKey())) {
+		if(isValidCustomer) {
+		//if(customers.containsKey(customer.getKey())) {
 			String[] words = request.split(" ");
 			if(words.length == 0){
 				return "FAIL";
