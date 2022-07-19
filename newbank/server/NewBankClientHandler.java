@@ -29,9 +29,8 @@ public class NewBankClientHandler extends Thread{
 			while (true){
 				// ask for user name
 				out.println("Enter Username");
-				Connect connection = new Connect();
-				connection.connect();
 				String userName = in.readLine();
+				userName=userName.toLowerCase().replaceAll(" ","");
 				// ask for password
 				out.println("Enter Password");
 				String password = in.readLine();
