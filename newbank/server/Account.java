@@ -1,8 +1,6 @@
 package newbank.server;
 import java.lang.Exception;
 import newbank.server.Customer.Customer;
-import newbank.server.Loans;
-import java.time.LocalDate;
 
 public class Account {
 
@@ -72,10 +70,4 @@ public class Account {
 		balance -= amount;
 	}
 	
-	public void repayLoanMonthly(){
-        	LocalDate todaysDate = LocalDate.now();
-		if(LocalDate.now().withDayOfMonth( 1 ) == true) {// pay back at the start of every month
-		getAccount("Main").getBalance() - getMonthlyPayment();
-	return "Loan amount withdrawn £" + getMonthlyLoanPayment();
-
 }
