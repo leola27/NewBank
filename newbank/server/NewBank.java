@@ -2,13 +2,15 @@ package newbank.server;
 
 import newbank.server.Customer.Customer;
 import newbank.server.Customer.CustomerID;
-
+import newbank.server.sqlite.connect.net.src.Connect;
+import java.util.Objects;
 import java.util.HashMap;
 
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
 	private HashMap<String, Customer> customers;
+	Connect connection = new Connect();
 
 	private NewBank() {
 		customers = new HashMap<>();
@@ -25,17 +27,27 @@ public class NewBank {
 		return bank;
 	}
 
-	public synchronized boolean isCustomer(String userName){
-		return customers.containsKey(userName);
+	//public synchronized boolean isCustomer(String userName)
+	public boolean isCustomer(String userName)
+	{
+		String result = connection.connect("SELECT NAME FROM CUSTOMERS WHERE NAME=",userName,"Name");
+		return Objects.nonNull(result);
 	}
 
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if(customers.containsKey(userName)) {
-			Customer customer = customers.get(userName);
-			if(customer.CheckPassword(password)) {
-				return new CustomerID(userName);
-			}
+	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword)
+	{
+		String passwordFromDb = connection.connect("SELECT PASSWORD FROM CUSTOMERS WHERE NAME=",userName,"Password");
+		if (passwordFromDb.equals(givenPassword))
+		{
+			return new CustomerID(userName);
 		}
+
+		//if(customers.containsKey(userName)) {
+			//Customer customer = customers.get(userName);
+			//if(customer.CheckPassword(password)) {
+				//return new CustomerID(userName);
+			//}
+		//}
 		return null;
 	}
 
