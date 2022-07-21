@@ -2,3 +2,7 @@
 *.class
 # the .idea folder should not be comitted
 *.idea
+.sqbpro
+.xml
+.db
+out
