@@ -41,26 +41,26 @@ public class NewBank {
 	{
 		if (isValidCustomer)
 		{
-			Customer customer = customers.get(userName);
+			//Customer customer = customers.get(userName);
 			String query="SELECT PASSWORD FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
 			String passwordFromDb = connection.connectSelect(query,  "Password");
 			if (passwordFromDb.equals(givenPassword)) {
 				return new CustomerID(userName);
 			}
 		}
-		if(customers.containsKey(userName)) {
-			Customer customer = customers.get(userName);
-			if(customer.CheckPassword(givenPassword)) {
-				return new CustomerID(userName);
-			}
-		}
+//		if(customers.containsKey(userName)) {
+//			Customer customer = customers.get(userName);
+//			if(customer.CheckPassword(givenPassword)) {
+//				return new CustomerID(userName);
+//			}
+//		}
 		return null;
 	}
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		//if(isValidCustomer) {
-		if(customers.containsKey(customer.getKey())) {
+		if(isValidCustomer) {
+		//if(customers.containsKey(customer.getKey())) {
 			String[] words = request.split(" ");
 			if(words.length == 0){
 				return "FAIL";
