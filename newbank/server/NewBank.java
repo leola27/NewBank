@@ -19,9 +19,9 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		customers.put("Bhagy", new Customer("Bhagy", "1234", "Main", 1000.0));
-		customers.put("Christina", new Customer("Christina", "abcd", "Main", 1500.0));
-		customers.put("John", new Customer("John", "password", "Main", 250.0));
+		customers.put("bhagy", new Customer("bhagy", "1234", "Main", 1000.0));
+		customers.put("christina", new Customer("christina", "abcd", "Main", 1500.0));
+		customers.put("john", new Customer("john", "password", "Main", 250.0));
 	}
 
 	public static NewBank getBank() {
@@ -41,25 +41,26 @@ public class NewBank {
 	{
 		if (isValidCustomer)
 		{
+			Customer customer = customers.get(userName);
 			String query="SELECT PASSWORD FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
 			String passwordFromDb = connection.connectSelect(query,  "Password");
 			if (passwordFromDb.equals(givenPassword)) {
 				return new CustomerID(userName);
 			}
 		}
-		//if(customers.containsKey(userName)) {
-			//Customer customer = customers.get(userName);
-			//if(customer.CheckPassword(password)) {
-				//return new CustomerID(userName);
-			//}
-		//}
+		if(customers.containsKey(userName)) {
+			Customer customer = customers.get(userName);
+			if(customer.CheckPassword(givenPassword)) {
+				return new CustomerID(userName);
+			}
+		}
 		return null;
 	}
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		if(isValidCustomer) {
-		//if(customers.containsKey(customer.getKey())) {
+		//if(isValidCustomer) {
+		if(customers.containsKey(customer.getKey())) {
 			String[] words = request.split(" ");
 			if(words.length == 0){
 				return "FAIL";
