@@ -67,7 +67,7 @@ public class Customer {
 		return true;
 	}
 
-	public boolean addLoad(double amountRequested){
+	public boolean addLoan(double amountRequested){
 		double maxAmount = getAccount("Main").getBalance() * 3;
 		if (amountRequested >= maxAmount) {
 			return false;
@@ -84,18 +84,31 @@ public class Customer {
 		return loan.loanHistory();
 	}
 
-	public boolean repayLoan(double amount){
-		if(loan == null){
+	public boolean repayLoan(String accountName, double amount){
+		if(loan == null || !hasAccount(accountName)){
 			return false;
 		}
-		Account main = getAccount("Main");
-		if(main.getBalance() < amount ||
-				loan.getLoanBalance() < amount){
+		Account main = getAccount(accountName);
+		if(main.getBalance() < amount || loan.getLoanBalance() < amount){
 			return false;
 		}
 		main.withdraw(amount);
 		loan.repay(amount);
 		return true;
+	}
+
+	public boolean moveMoney(double amount, String fromAccountName, String toAccountName){
+		if (hasAccount(fromAccountName) && hasAccount(toAccountName)) {
+			Account fromAccount = getAccount(fromAccountName);
+			Account toAccount = getAccount(toAccountName);
+
+			if (fromAccount.getBalance() >= amount) {
+				fromAccount.withdraw(amount);
+				toAccount.deposit(amount);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public Account getAccount(String accountName) {
