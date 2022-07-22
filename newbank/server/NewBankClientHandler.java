@@ -29,15 +29,14 @@ public class NewBankClientHandler extends Thread{
 			while (true){
 				// ask for user name
 				out.println("Enter Username");
-				Connect connection = new Connect();
-				connection.connect();
 				String userName = in.readLine();
+				userName=userName.toLowerCase().replaceAll(" ","");
 				// ask for password
 				out.println("Enter Password");
 				String password = in.readLine();
 				out.println("Checking Details...");
 				// authenticate user and get customer ID token from bank for use in subsequent requests
-				if(bank.isCustomer(userName)){
+				if(bank.isValidCustomerCheck(userName)){
 					CustomerID customer = bank.checkLogInDetails(userName, password);
 					// if the user is authenticated then get requests from the user and process them
 					if(customer != null) {
@@ -65,7 +64,8 @@ public class NewBankClientHandler extends Thread{
 					if (request.toLowerCase().equals("y")) {
 						out.println("Please enter the account name");
 						String accountName = in.readLine();
-						new Customer(userName, password, accountName, 0);
+						Customer newCustomer = new Customer(userName, password, accountName, 0);
+						newCustomer.addNewCustomerToDb(userName,password);
 //						bank.newCustomer(userName, password, accountName, 0);
 						out.println("Success, please login with your new account");
 					} else {
