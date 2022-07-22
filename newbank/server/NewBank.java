@@ -71,6 +71,7 @@ public class NewBank {
 				case "REQUESTLOAN": return loanReview(words, customer);
 				case "LOANHISTORY" : return loanHistory(words, customer);
 				case "PAY": return pay(words, customer);
+				case "MOVE": return move(words, customer);
 //					return initialiseOfferLoan(words, customer);
 				default : return "FAIL";
 			}
@@ -103,7 +104,7 @@ public class NewBank {
 		try {
 			double amountRequested = Double.parseDouble(words[1]);
 			Customer customer = customers.get(customerID.getKey());
-			if(customer.addLoad(amountRequested)){
+			if(customer.addLoan(amountRequested)){
 				return "SUCCESS";
 			}
 			else {
@@ -126,12 +127,6 @@ public class NewBank {
 			double amount = Double.parseDouble(words[2]);
 
 			Customer sender = customers.get(customer.getKey());
-			if (receivingCustomer.equals("LOAN")) {
-				if(sender.repayLoan(amount)){
-					return "SUCCESS";
-				}
-				return "FAIL";
-			}
 			Customer receiver = customers.get(receivingCustomer);
 
 			if (sender.hasAccount("Main") && receiver.hasAccount("Main")) {
@@ -145,6 +140,29 @@ public class NewBank {
 					return "SUCCESS";
 				}
 			}
+		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		return "FAIL";
+	}
+
+	private String move(String[] words, CustomerID customer) {
+		try {
+			double amount = Double.parseDouble(words[1]);
+			String fromAccountName = words[2];
+			String toAccountName = words[3];
+
+			Customer sender = customers.get(customer.getKey());
+			if (toAccountName.equalsIgnoreCase("LOAN")) {
+				if (sender.repayLoan(fromAccountName, amount)) {
+					return "SUCCESS";
+				}
+			}
+			else if (sender.moveMoney(amount, fromAccountName, toAccountName)) {
+				return "SUCCESS";
+			}
+
 		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 			e.printStackTrace();
 		}
