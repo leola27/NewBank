@@ -21,6 +21,10 @@ public class Account {
 		customer.addAccount(new Account(accountName, 0));
 		return "SUCCESS";
 	}
+	
+	public Account getAccount(String accountName) {
+		return Account.get(accountName);
+    	}
 
 	public String getAccountName(){
 		return accountName;
@@ -44,7 +48,7 @@ public class Account {
 	private void checkSufficientFunds(double amount) throws Exception {
   		if (balance < amount) {
     		throw new Exception("Not enough funds to withdraw: " + amount);
-  	 }
+  	 	}
 	}
 
 	public void transferMoney(Account fromAccount, Account toAccount, double amount){ 
@@ -53,7 +57,7 @@ public class Account {
         	fromAccount.setBalance(fromAccount.balance -= amount);
    		} else {
         	System.out.println("Transfer Failed, not enough funds to complete transcation");
-    	 }
+    	 	}
 	}
 
 // I feel like this method can be used to transfer to person to person or adapted too
@@ -69,5 +73,9 @@ public class Account {
 	public void withdraw(double amount) {
 		balance -= amount;
 	}
+	
+	public static Account get(String accountName2) {
+        return null;
+    	}
 	
 }
