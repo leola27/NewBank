@@ -12,13 +12,12 @@ public class Loans {
     private double monthlyInterestRate;
     private int numberOfYears;
     
-    public Loans(double balance, double monthlyInterestRate, int numberOfYears,
-      double loanAmount) {
+    public Loans(double loanAmount) {
         this.loanAmount = loanAmount;
         this.loanPaid = 0;
         this.balance = getAccount("Main").getBalance();
         this.monthlyInterestRate = 0.1;
-        this.numberOfYears = numberOfYears;
+        this.numberOfYears = 3;
     }
 
     public double getLoanAmount(){
