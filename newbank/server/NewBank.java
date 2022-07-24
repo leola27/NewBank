@@ -4,6 +4,8 @@ import newbank.server.Customer.Customer;
 import newbank.server.Customer.CustomerID;
 import newbank.server.sqlite.connect.net.src.Connect;
 import java.util.Objects;
+import newbank.server.Transaction.Transaction;
+
 import java.util.HashMap;
 
 public class NewBank {
@@ -72,6 +74,7 @@ public class NewBank {
 				case "LOANHISTORY" : return loanHistory(words, customer);
 				case "PAY": return pay(words, customer);
 				case "MOVE": return move(words, customer);
+				case "TRANSACTIONHISTORY": return printTransactionHistory(customer);
 //					return initialiseOfferLoan(words, customer);
 				default : return "FAIL";
 			}
@@ -128,17 +131,25 @@ public class NewBank {
 
 			Customer sender = customers.get(customer.getKey());
 			Customer receiver = customers.get(receivingCustomer);
+      Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
 
 			if (sender.hasAccount("Main") && receiver.hasAccount("Main")) {
-				Account senderMain = sender.getAccount("Main");
+        Account senderMain = sender.getAccount("Main");
 				Account receiverMain = receiver.getAccount("Main");
 
 				if (senderMain.getBalance() >= amount) {
 					senderMain.withdraw(amount);
 					receiverMain.deposit(amount);
 
+          transaction.setStatus("SUCCESS");
+
 					return "SUCCESS";
-				}
+				} else {
+          transaction.setStatus("FAIL");
+        }
+
+        sender.addTransaction(transaction);
+        receiver.addTransaction(transaction);
 			}
 		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
 			e.printStackTrace();
@@ -169,5 +180,14 @@ public class NewBank {
 
 		return "FAIL";
 	}
+  private String printTransactionHistory(CustomerID customerID) {
+    try {
+      Customer customer = customers.get(customerID.getKey());
+      return customer.allTransactionsToString();
+    } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+      e.printStackTrace();
+    }
+    return "FAIL";
+  }
 
 }
