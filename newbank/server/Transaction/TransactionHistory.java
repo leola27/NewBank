@@ -1,56 +1,43 @@
 package newbank.server.Transaction;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class TransactionHistory {
-  private HashMap<String, Transaction> transactions;
+	private ArrayList<Transaction> transactions;
 
-  public TransactionHistory() {
-    transactions = new HashMap<>();
-  }
+	public TransactionHistory() {
+		transactions = new ArrayList<Transaction>();
+	}
 
-  public void addTransaction(Transaction transaction) {
-    transactions.put(transaction.getType(), transaction);
-  }
+	public void addTransaction(Transaction transaction) {
+		transactions.add(transaction);
+	}
 
-  public HashMap<String, Transaction> getTransactionsByType(String type) {
-    HashMap<String, Transaction> result = new HashMap<>();
-    for(Transaction t : transactions.values()) {
-      if(t.getType().equals(type)) {
-        result.put(t.getType(), t);
-      }
-    }
+	public ArrayList<Transaction> getTransactionsByType(String type) {
+		ArrayList<Transaction> transactionsByType = new ArrayList<Transaction>();
+		for (Transaction transaction : transactions) {
+			if (transaction.getType().equals(type)) {
+				transactionsByType.add(transaction);
+			}
+		}
+		return transactionsByType;
+	}
 
-    printTransactions(result);
+	public ArrayList<Transaction> getTransactionsByOrigin(String origin) {
+		ArrayList<Transaction> transactionsByOrigin = new ArrayList<Transaction>();
+		for (Transaction transaction : transactions) {
+			if (transaction.getOrigin().equals(origin)) {
+				transactionsByOrigin.add(transaction);
+			}
+		}
+		return transactionsByOrigin;
+	}
 
-    return result;
-  }
-
-  public HashMap<String, Transaction> getTransactionsByOrigin(String origin) {
-    HashMap<String, Transaction> result = new HashMap<>();
-    for(Transaction t : transactions.values()) {
-      if(t.getOrigin().equals(origin)) {
-        result.put(t.getType(), t);
-      }
-    }
-
-    printTransactions(result);
-
-    return result;
-  }
-
-  public String allTransactionsToString() {
-    String s = "";
-    for (Transaction t : transactions.values()) {
-      s += t.toString() + "\n=======\n";
-    }
-    return s;
-  }
-
-  public void printTransactions(HashMap<String, Transaction> transactions) {
-    for(Transaction t : transactions.values()) {
-      System.out.println(t.toString());
-    }
-  }
-
+	public String allTransactionsToString() {
+		String s = "";
+		for (Transaction transaction : transactions) {
+			s += transaction.toString() + "\n=========\n";
+		}
+		return s;
+	}
 }
