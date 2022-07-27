@@ -22,9 +22,9 @@ public class Account {
 		return "SUCCESS";
 	}
 	
-	public Account getAccount(String accountName) {
-		return Account.get(accountName);
-    	}
+//	public Account getAccount(String accountName) {
+//		return Account.get(accountName);
+//    	}
 
 	public String getAccountName(){
 		return accountName;
@@ -74,8 +74,8 @@ public class Account {
 		balance -= amount;
 	}
 	
-	public static Account get(String accountName2) {
-        return null;
-    	}
+//	public static Account get(String accountName2) {
+//        return null;
+//    	}
 	
 }

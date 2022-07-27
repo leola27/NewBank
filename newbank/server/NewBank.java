@@ -84,7 +84,9 @@ public class NewBank {
 		try {
 			double amountRequested = Double.parseDouble(words[1]);
 			Customer customer = customers.get(customerID.getKey());
-			if(customer.addLoad(amountRequested)){
+			if(customer.addLoad(amountRequested)){ // not returning true
+				System.out.println("This has hit");
+
 				return "SUCCESS";
 			}
 			else {

@@ -65,6 +65,7 @@ public class Customer {
 		}
 		getAccount("Main").deposit(amountRequested);
 		loan = new Loans(amountRequested);
+		loan.addToLoanBalance(amountRequested);
 		return true;
 	}
 

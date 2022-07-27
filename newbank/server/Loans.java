@@ -8,14 +8,13 @@ import java.time.LocalDate;
 public class Loans {
     private double loanAmount;
     private double loanPaid;
-    private double balance;
+    private double loanBalance;
     private double monthlyInterestRate;
     private int numberOfYears;
     
     public Loans(double loanAmount) {
         this.loanAmount = loanAmount;
         this.loanPaid = 0;
-        this.balance = getAccount("Main").getBalance();
         this.monthlyInterestRate = 0.1;
         this.numberOfYears = 3;
     }
@@ -32,24 +31,22 @@ public class Loans {
         loanPaid += amount;
     }
     
-    public Account getAccount(String accountName) {
-		return Account.get(accountName);
-    }
-    
-    public double getMonthlyLoanRepayment() {
-        double monthlyRepayment = balance * monthlyInterestRate / (1 -
-        (1 / Math.pow(1 + monthlyInterestRate, numberOfYears * 12))); //calculate monthly repayment
-        return monthlyRepayment;    
-    }
 
-    public boolean repayLoanMonthly(){
-         LocalDate todaysDate = LocalDate.now();
-         if(todaysDate == LocalDate.now().withDayOfMonth( 1) && balance > getMonthlyLoanRepayment()) {// pay back at the start of every month
-         balance = getAccount("Main").getBalance()- getMonthlyLoanRepayment();
-         return true;
-           }
-        return false;
-        }
+    
+//    public double getMonthlyLoanRepayment() {
+//        double monthlyRepayment = balance * monthlyInterestRate / (1 -
+//        (1 / Math.pow(1 + monthlyInterestRate, numberOfYears * 12))); //calculate monthly repayment
+//        return monthlyRepayment;
+//    }
+
+//    public boolean repayLoanMonthly(){
+//         LocalDate todaysDate = LocalDate.now();
+//         if(todaysDate == LocalDate.now().withDayOfMonth( 1) && balance > getMonthlyLoanRepayment()) {// pay back at the start of every month
+//         balance = getAccount("Main").getBalance()- getMonthlyLoanRepayment();
+//         return true;
+//           }
+//        return false;
+//        }
 
 
     public void addLoan(double amount){
@@ -64,6 +61,9 @@ public class Loans {
         return "Loan amount: " + loanAmount + "\nPaid: " + loanPaid + "\nRemaining balance: " + getLoanBalance();
     }
 
+    public void addToLoanBalance(double amount) {
+        loanBalance += amount;
+    }
 
 
 }
