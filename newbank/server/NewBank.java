@@ -3,7 +3,9 @@ package newbank.server;
 import newbank.server.Customer.Customer;
 import newbank.server.Customer.CustomerID;
 import newbank.server.sqlite.connect.net.src.Connect;
-import java.util.Objects;
+// import java.util.Objects;
+import newbank.server.Transaction.Transaction;
+
 import java.util.HashMap;
 
 public class NewBank {
@@ -15,6 +17,7 @@ public class NewBank {
 
 	private NewBank() {
 		customers = new HashMap<>();
+		isValidCustomer = true; // Temporary solution for testing
 		addTestData();
 	}
 
@@ -28,32 +31,36 @@ public class NewBank {
 		return bank;
 	}
 
-	//public synchronized boolean isCustomer(String userName)
-	public boolean isValidCustomerCheck(String userName)
-	{
-		String query="SELECT NAME FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
-		String result = connection.connectSelect(query,"Name");
-		isValidCustomer= Objects.nonNull(result);
-		return isValidCustomer;
+	public synchronized boolean isCustomer(String userName) {
+		return customers.containsKey(userName);
 	}
+
+
+	// public boolean isValidCustomerCheck(String userName)
+	// {
+	// 	String query="SELECT NAME FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
+	// 	String result = connection.connectSelect(query,"Name");
+	// 	isValidCustomer= Objects.nonNull(result);
+	// 	return isValidCustomer;
+	// }
 
 	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword)
 	{
-		if (isValidCustomer)
-		{
-			//Customer customer = customers.get(userName);
-			String query="SELECT PASSWORD FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
-			String passwordFromDb = connection.connectSelect(query,  "Password");
-			if (passwordFromDb.equals(givenPassword)) {
+		// if (isValidCustomer)
+		// {
+		// 	//Customer customer = customers.get(userName);
+		// 	String query="SELECT PASSWORD FROM CUSTOMERS WHERE NAME="+"\""+ userName +"\"";
+		// 	String passwordFromDb = connection.connectSelect(query,  "Password");
+		// 	if (passwordFromDb.equals(givenPassword)) {
+		// 		return new CustomerID(userName);
+		// 	}
+		// }
+		if(customers.containsKey(userName)) {
+			Customer customer = customers.get(userName);
+			if(customer.CheckPassword(givenPassword)) {
 				return new CustomerID(userName);
 			}
 		}
-//		if(customers.containsKey(userName)) {
-//			Customer customer = customers.get(userName);
-//			if(customer.CheckPassword(givenPassword)) {
-//				return new CustomerID(userName);
-//			}
-//		}
 		return null;
 	}
 
@@ -72,6 +79,7 @@ public class NewBank {
 				case "LOANHISTORY" : return loanHistory(words, customer);
 				case "PAY": return pay(words, customer);
 				case "MOVE": return move(words, customer);
+				case "TRANSACTIONHISTORY": return printTransactionHistory(customer);
 //					return initialiseOfferLoan(words, customer);
 				default : return "FAIL";
 			}
@@ -128,6 +136,7 @@ public class NewBank {
 
 			Customer sender = customers.get(customer.getKey());
 			Customer receiver = customers.get(receivingCustomer);
+			Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
 
 			if (sender.hasAccount("Main") && receiver.hasAccount("Main")) {
 				Account senderMain = sender.getAccount("Main");
@@ -137,7 +146,19 @@ public class NewBank {
 					senderMain.withdraw(amount);
 					receiverMain.deposit(amount);
 
+					transaction.setStatus("SUCCESS");
+
+					sender.addTransaction(transaction);
+					receiver.addTransaction(transaction);
+
 					return "SUCCESS";
+				} else {
+					sender.addTransaction(transaction);
+					receiver.addTransaction(transaction);
+
+					transaction.setStatus("FAIL");
+
+					return "FAIL";
 				}
 			}
 		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
@@ -167,6 +188,15 @@ public class NewBank {
 			e.printStackTrace();
 		}
 
+		return "FAIL";
+	}
+	private String printTransactionHistory(CustomerID customerID) {
+		try {
+			Customer customer = customers.get(customerID.getKey());
+			return customer.allTransactionsToString();
+		} catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+			e.printStackTrace();
+		}
 		return "FAIL";
 	}
 

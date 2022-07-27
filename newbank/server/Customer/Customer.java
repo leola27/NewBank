@@ -3,6 +3,8 @@ import newbank.server.sqlite.connect.net.src.Connect;
 
 import newbank.server.Account;
 import newbank.server.Loans;
+import newbank.server.Transaction.Transaction;
+import newbank.server.Transaction.TransactionHistory;
 
 import java.util.HashMap;
 
@@ -11,19 +13,22 @@ public class Customer {
 	private String password;
 	private HashMap<String, Account> accounts;
 	Connect connection = new Connect();
+	private TransactionHistory transactions;
 
 	private Loans loan;
-	public Customer(String username, String password) {
+	public Customer(String username, String password){
 		this.username = username;
 		this.password = password;
 		accounts = new HashMap<>();
+		transactions = new TransactionHistory();
 	}
 
-	public Customer(String userName, String password, String accountName, double balance) {
+	public Customer(String userName, String password, String accountName, double balance){
 		this.username = userName;
 		this.password = password;
 		accounts = new HashMap<>();
 		accounts.put(accountName, new Account(accountName, balance));
+		transactions = new TransactionHistory();
 	}
 
 //	public synchronized Customer newCustomer(String customerName, String password, String accountName, double openingBalance){
@@ -32,7 +37,7 @@ public class Customer {
 //		return customer;
 //	}
 
-	public String getUsername() {
+	public String getUsername(){
 		return username;
 	}
 
@@ -40,9 +45,9 @@ public class Customer {
 		return this.password.equals(password);
 	}
 
-	public String accountsToString() {
+	public String accountsToString(){
 		String s = "";
-		for(Account a : accounts.values()) {
+		for(Account a : accounts.values()){
 			s += a.toString() + "\n";
 		}
 		return s;
@@ -59,7 +64,7 @@ public class Customer {
 		return accounts.containsKey(name);
 	}
 
-	public boolean addAccount(Account account) {
+	public boolean addAccount(Account account){
 		if(hasAccount(account.getAccountName())){
 			return false;
 		}
@@ -69,7 +74,7 @@ public class Customer {
 
 	public boolean addLoan(double amountRequested){
 		double maxAmount = getAccount("Main").getBalance() * 3;
-		if (amountRequested >= maxAmount) {
+		if (amountRequested >= maxAmount){
 			return false;
 		}
 		getAccount("Main").deposit(amountRequested);
@@ -113,6 +118,20 @@ public class Customer {
 
 	public Account getAccount(String accountName) {
 		return accounts.get(accountName);
+	}
+
+	public String getName(){
+		return username;
+	}
+
+	// print the transaction history of the customer
+	public String allTransactionsToString(){
+		return transactions.allTransactionsToString();
+	}
+
+	// add transaction to the transaction history of the customer
+	public void addTransaction(Transaction transaction){
+		transactions.addTransaction(transaction);
 	}
 
 }

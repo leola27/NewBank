@@ -1,7 +1,6 @@
 package newbank.server;
 
 import newbank.server.Customer.Customer;
-import newbank.server.sqlite.connect.net.src.Connect;
 import newbank.server.Customer.CustomerID;
 
 import java.io.BufferedReader;
@@ -30,13 +29,13 @@ public class NewBankClientHandler extends Thread{
 				// ask for user name
 				out.println("Enter Username");
 				String userName = in.readLine();
-				userName=userName.toLowerCase().replaceAll(" ","");
+				userName = userName.toLowerCase().replaceAll(" ","");
 				// ask for password
 				out.println("Enter Password");
 				String password = in.readLine();
 				out.println("Checking Details...");
 				// authenticate user and get customer ID token from bank for use in subsequent requests
-				if(bank.isValidCustomerCheck(userName)){
+				if(bank.isCustomer(userName)){
 					CustomerID customer = bank.checkLogInDetails(userName, password);
 					// if the user is authenticated then get requests from the user and process them
 					if(customer != null) {
