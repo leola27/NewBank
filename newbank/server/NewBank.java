@@ -7,6 +7,7 @@ import newbank.server.sqlite.connect.net.src.Connect;
 import newbank.server.Transaction.Transaction;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class NewBank {
 
@@ -22,9 +23,12 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		customers.put("bhagy", new Customer("bhagy", "1234", "Main", 1000.0));
-		customers.put("christina", new Customer("christina", "abcd", "Main", 1500.0));
-		customers.put("john", new Customer("john", "password", "Main", 250.0));
+		customers.put("bhagy", new Customer("bhagy", "1234", "Main",
+				12345678, 1000.0));
+		customers.put("christina", new Customer("christina", "abcd", "Main",
+				29837279, 1500.0));
+		customers.put("john", new Customer("john", "password", "Main",
+				23190586, 250.0));
 	}
 
 	public static NewBank getBank() {
@@ -87,9 +91,29 @@ public class NewBank {
 		return "FAIL";
 	}
 
+	public int newAccountNumber(){
+		boolean usedAccountNumber = false;
+		int accountNumber;
+		do{
+			// generate a random account number
+			Random random = new Random();
+			accountNumber = random.nextInt(10000000, 99999999);
+			// check if the account number is taken
+			for(Customer customer1: customers.values()){
+				for(Account account: customer1.getAccounts()){
+					if(account.getAccountNumber() == accountNumber){
+						usedAccountNumber = true;
+						break;
+					}
+				}
+			}
+		}while (usedAccountNumber);  // if it is taken, try another random account number
+		return accountNumber;
+	}
+
 	private synchronized String accountCreationReview(String[] words, CustomerID customer) {
 		try {
-			return new Account(words[1], 0).newAccount(customers.get(customer.getKey()), words[1]);
+			return Account.newAccount(customers.get(customer.getKey()), words[1], newAccountNumber());
 		}
 		catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			e.printStackTrace();

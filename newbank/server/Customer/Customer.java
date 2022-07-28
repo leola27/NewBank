@@ -6,6 +6,7 @@ import newbank.server.Loans;
 import newbank.server.Transaction.Transaction;
 import newbank.server.Transaction.TransactionHistory;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Customer {
@@ -23,11 +24,11 @@ public class Customer {
 		transactions = new TransactionHistory();
 	}
 
-	public Customer(String userName, String password, String accountName, double balance){
+	public Customer(String userName, String password, String accountName, int accountNumber, double balance){
 		this.username = userName;
 		this.password = password;
 		accounts = new HashMap<>();
-		accounts.put(accountName, new Account(accountName, balance));
+		accounts.put(accountName, new Account(accountName, accountNumber, balance));
 		transactions = new TransactionHistory();
 	}
 
@@ -132,6 +133,10 @@ public class Customer {
 	// add transaction to the transaction history of the customer
 	public void addTransaction(Transaction transaction){
 		transactions.addTransaction(transaction);
+	}
+
+	public Collection<Account> getAccounts(){
+		return accounts.values();
 	}
 
 }

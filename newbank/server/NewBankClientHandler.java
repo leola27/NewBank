@@ -63,7 +63,8 @@ public class NewBankClientHandler extends Thread{
 					if (request.toLowerCase().equals("y")) {
 						out.println("Please enter the account name");
 						String accountName = in.readLine();
-						Customer newCustomer = new Customer(userName, password, accountName, 0);
+						int accountNumber = bank.newAccountNumber();
+						Customer newCustomer = new Customer(userName, password, accountName, accountNumber, 0);
 						newCustomer.addNewCustomerToDb(userName,password);
 //						bank.newCustomer(userName, password, accountName, 0);
 						out.println("Success, please login with your new account");
