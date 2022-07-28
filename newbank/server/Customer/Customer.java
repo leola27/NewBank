@@ -50,6 +50,12 @@ public class Customer {
 		return accounts.containsKey(name);
 	}
 
+	public Account getAccount(String accountName) {
+		return accounts.get(accountName);
+	}
+
+
+	// Functions below pertain to loan payments and history details
 	public boolean addAccount(Account account) {
 		if(hasAccount(account.getAccountName())){
 			return false;
@@ -58,14 +64,14 @@ public class Customer {
 		return true;
 	}
 
-	public boolean addLoad(double amountRequested){
+	public boolean addLoan(double amountRequested){
 		double maxAmount = getAccount("Main").getBalance() * 3;
 		if (amountRequested >= maxAmount) {
 			return false;
 		}
 		getAccount("Main").deposit(amountRequested);
 		loan = new Loans(amountRequested);
-		loan.addToLoanBalance(amountRequested);
+		//loan.addToLoanBalance(amountRequested);
 		return true;
 	}
 
@@ -90,8 +96,26 @@ public class Customer {
 		return true;
 	}
 
-	public Account getAccount(String accountName) {
-		return accounts.get(accountName);
-	}
+	// -- Kameira to complete the below functions --
+	// I moved these as I believe the loan functionality belongs to the customer to do and not the actual loan class itself
+	// This is where the errors were coming in as the loan class is essentially the lowest in the class hierarchy
+	// As there is a repayLoan function above, shall we just amend below to calculate interest over the course of the year and add to loan original balance?
+
+
+//    public double getMonthlyLoanRepayment() {
+//        double monthlyRepayment = balance * monthlyInterestRate / (1 -
+//        (1 / Math.pow(1 + monthlyInterestRate, numberOfYears * 12))); //calculate monthly repayment
+//        return monthlyRepayment;
+//    }
+
+//    public boolean repayLoanMonthly(){
+//         LocalDate todaysDate = LocalDate.now();
+//         if(todaysDate == LocalDate.now().withDayOfMonth( 1) && balance > getMonthlyLoanRepayment()) {// pay back at the start of every month
+//         balance = getAccount("Main").getBalance()- getMonthlyLoanRepayment();
+//         return true;
+//           }
+//        return false;
+//        }
+
 
 }
