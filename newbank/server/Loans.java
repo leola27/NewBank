@@ -5,9 +5,14 @@ import newbank.server.Customer.Customer;
 public class Loans {
     private double loanAmount;
     private double loanPaid;
+    private double monthlyInterestRate;
+    private int numberOfYears;
+
     public Loans(double loanAmount) {
         this.loanAmount = loanAmount;
         this.loanPaid = 0;
+        this.monthlyInterestRate = 0.1;
+        this.numberOfYears = 3;
     }
 
     public double getLoanAmount(){
