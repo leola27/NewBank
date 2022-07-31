@@ -6,6 +6,7 @@ import newbank.server.Loans;
 import newbank.server.Transaction.Transaction;
 import newbank.server.Transaction.TransactionHistory;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Customer {
@@ -23,11 +24,11 @@ public class Customer {
 		transactions = new TransactionHistory();
 	}
 
-	public Customer(String userName, String password, String accountName, double balance){
+	public Customer(String userName, String password, String accountName, int accountNumber, double balance){
 		this.username = userName;
 		this.password = password;
 		accounts = new HashMap<>();
-		accounts.put(accountName, new Account(accountName, balance));
+		accounts.put(accountName, new Account(accountName, accountNumber, balance));
 		transactions = new TransactionHistory();
 	}
 
@@ -133,5 +134,33 @@ public class Customer {
 	public void addTransaction(Transaction transaction){
 		transactions.addTransaction(transaction);
 	}
+
+  International_Payments
+	public Collection<Account> getAccounts(){
+		return accounts.values();
+	}
+
+
+	// -- Kameira to complete the below functions --
+	// I moved these as I believe the loan functionality belongs to the customer to do and not the actual loan class itself
+	// This is where the errors were coming in as the loan class is essentially the lowest in the class hierarchy
+	// As there is a repayLoan function above, shall we just amend below to calculate interest over the course of the year and add to loan original balance?
+
+
+//    public double getMonthlyLoanRepayment() {
+//        double monthlyRepayment = balance * monthlyInterestRate / (1 -
+//        (1 / Math.pow(1 + monthlyInterestRate, numberOfYears * 12))); //calculate monthly repayment
+//        return monthlyRepayment;
+//    }
+
+//    public boolean repayLoanMonthly(){
+//         LocalDate todaysDate = LocalDate.now();
+//         if(todaysDate == LocalDate.now().withDayOfMonth( 1) && balance > getMonthlyLoanRepayment()) {// pay back at the start of every month
+//         balance = getAccount("Main").getBalance()- getMonthlyLoanRepayment();
+//         return true;
+//           }
+//        return false;
+//        }
+ master
 
 }

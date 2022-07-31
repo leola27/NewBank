@@ -7,6 +7,7 @@ import newbank.server.sqlite.connect.net.src.Connect;
 import newbank.server.Transaction.Transaction;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class NewBank {
 
@@ -22,9 +23,12 @@ public class NewBank {
 	}
 
 	private void addTestData() {
-		customers.put("bhagy", new Customer("bhagy", "1234", "Main", 1000.0));
-		customers.put("christina", new Customer("christina", "abcd", "Main", 1500.0));
-		customers.put("john", new Customer("john", "password", "Main", 250.0));
+		customers.put("bhagy", new Customer("bhagy", "1234", "Main",
+				12345678, 1000.0));
+		customers.put("christina", new Customer("christina", "abcd", "Main",
+				29837279, 1500.0));
+		customers.put("john", new Customer("john", "password", "Main",
+				23190586, 250.0));
 	}
 
 	public static NewBank getBank() {
@@ -87,9 +91,29 @@ public class NewBank {
 		return "FAIL";
 	}
 
+	public int newAccountNumber(){
+		boolean usedAccountNumber = false;
+		int accountNumber;
+		do{
+			// generate a random account number
+			Random random = new Random();
+			accountNumber = random.nextInt(10000000, 99999999);
+			// check if the account number is taken
+			for(Customer customer1: customers.values()){
+				for(Account account: customer1.getAccounts()){
+					if(account.getAccountNumber() == accountNumber){
+						usedAccountNumber = true;
+						break;
+					}
+				}
+			}
+		}while (usedAccountNumber);  // if it is taken, try another random account number
+		return accountNumber;
+	}
+
 	private synchronized String accountCreationReview(String[] words, CustomerID customer) {
 		try {
-			return new Account(words[1], 0).newAccount(customers.get(customer.getKey()), words[1]);
+			return Account.newAccount(customers.get(customer.getKey()), words[1], newAccountNumber());
 		}
 		catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			e.printStackTrace();
@@ -129,36 +153,108 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
+	private boolean isValidIBAN(String string){
+		// very basic validation that can be improved
+		if (string.length() < 15 || string.length() > 32){
+			return false;
+		}
+		if (string.charAt(0) < 'A' || string.charAt(0) > 'Z'){
+			return false;
+		}
+		if (string.charAt(1) < 'A' || string.charAt(1) > 'Z'){
+			return false;
+		}
+		if (string.charAt(2) < '0' || string.charAt(2) > '9'){
+			return false;
+		}
+		if (string.charAt(3) < '0' || string.charAt(3) > '9'){
+			return false;
+		}
+		return true;
+	}
+
+
 	private String pay(String[] words, CustomerID customer) {
 		try {
 			String receivingCustomer = words[1];
 			double amount = Double.parseDouble(words[2]);
 
 			Customer sender = customers.get(customer.getKey());
-			Customer receiver = customers.get(receivingCustomer);
-			Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
 
-			if (sender.hasAccount("Main") && receiver.hasAccount("Main")) {
+			if (sender.hasAccount("Main") ) {
 				Account senderMain = sender.getAccount("Main");
-				Account receiverMain = receiver.getAccount("Main");
+				Customer receiver = null;
+				Account receiverAccount = null;
+				// first, check if the receivingCustomer matches a customer name
+				if(customers.containsKey(receivingCustomer)){
+					receiver =  customers.get(receivingCustomer);
+					if(receiver.hasAccount("Main")){
+						receiverAccount = receiver.getAccount("Main");
+					}
+				}
+				else{
+					// if not, check if it matches an account number of an IBAN
+					for(Customer customer1: customers.values()){
+						for(Account account: customer1.getAccounts()){
+							// comparing both the account number and IBAN and see if one of them match
+							if(String.valueOf(account.getAccountNumber()).equals(receivingCustomer) ||
+									account.IBAN().equals(receivingCustomer)){
+								receiver = customer1;
+								receiverAccount = account;
+								break;
+							}
+						}
+						// if we found the receiver already, there is no point to continue looping, so break
+						if(receiverAccount != null){
+							break;
+						}
+					}
+				}
+				if(receiverAccount != null && receiver != sender) {
+					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
 
-				if (senderMain.getBalance() >= amount) {
-					senderMain.withdraw(amount);
-					receiverMain.deposit(amount);
+					Account receiverMain = receiver.getAccount("Main");
 
-					transaction.setStatus("SUCCESS");
+					if (senderMain.getBalance() >= amount) {
+						senderMain.withdraw(amount);
+						receiverMain.deposit(amount);
 
-					sender.addTransaction(transaction);
-					receiver.addTransaction(transaction);
+						transaction.setStatus("SUCCESS");
 
-					return "SUCCESS";
-				} else {
-					sender.addTransaction(transaction);
-					receiver.addTransaction(transaction);
+						sender.addTransaction(transaction);
+						receiver.addTransaction(transaction);
 
-					transaction.setStatus("FAIL");
+						return "SUCCESS";
 
-					return "FAIL";
+					} else {
+						sender.addTransaction(transaction);
+						receiver.addTransaction(transaction);
+
+						transaction.setStatus("FAIL");
+
+						return "FAIL";
+					}
+				}
+				else{
+					// if the customer is not found, check to see if it's a valid IBAN (for international payments)
+					Transaction transaction = new Transaction("PAY", amount, sender.getName(),
+							receivingCustomer);
+					if(isValidIBAN(receivingCustomer)){
+						// we only need to withdraw from the sender (as the receiver is not one of the bank's customers)
+						senderMain.withdraw(amount);
+
+						transaction.setStatus("SUCCESS");
+
+						sender.addTransaction(transaction);
+
+						return "SUCCESS";
+
+					}
+					else{
+						transaction.setStatus("FAIL");
+						sender.addTransaction(transaction);
+						return "FAIL";
+					}
 				}
 			}
 		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
