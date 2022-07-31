@@ -135,7 +135,6 @@ public class Customer {
 		transactions.addTransaction(transaction);
 	}
 
-  International_Payments
 	public Collection<Account> getAccounts(){
 		return accounts.values();
 	}
@@ -161,6 +160,6 @@ public class Customer {
 //           }
 //        return false;
 //        }
- master
+
 
 }
