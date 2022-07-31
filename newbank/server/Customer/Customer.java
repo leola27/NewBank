@@ -54,12 +54,12 @@ public class Customer {
 		return s;
 	}
 
-	public void addNewCustomerToDb(String userName, String Password)
-	{
-
-		connection.connectInsert("INSERT INTO CUSTOMERS (NAME,PASSWORD) VALUES (\""+username+"\",\""+password+"\")", userName);
-
-	}
+//	public void addNewCustomerToDb(String userName, String Password)
+//	{
+//
+//		connection.connectInsert("INSERT INTO CUSTOMERS (NAME,PASSWORD) VALUES (\""+username+"\",\""+password+"\")", userName);
+//
+//	}
 
 	public boolean hasAccount(String name){
 		return accounts.containsKey(name);

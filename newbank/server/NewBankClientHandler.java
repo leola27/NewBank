@@ -81,8 +81,8 @@ public class NewBankClientHandler extends Thread {
 						String accountName = in.readLine();
 						Customer newCustomer = new Customer(userName, password, accountName,
 								bank.newAccountNumber(), 0);
-						newCustomer.addNewCustomerToDb(userName, password);
-						// bank.newCustomer(userName, password, accountName, 0);
+						//newCustomer.addNewCustomerToDb(userName, password);
+						bank.addCustomer(userName, newCustomer);
 						out.println("Success, please login with your new account");
 					} else {
 						out.println("Please try again");
