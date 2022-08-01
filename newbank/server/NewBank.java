@@ -296,4 +296,8 @@ public class NewBank {
 		return "FAIL";
 	}
 
+	public void addCustomer(String customerName, Customer customer){
+		customers.put(customerName, customer);
+	}
+
 }
