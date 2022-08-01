@@ -51,8 +51,8 @@ public class Account {
 	}
 
 	public String toString() {
-		return ("account name: " + accountName + ", account number: " + accountNumber + ", sort code: " + SORT_CODE
-				+ ", IBAN: "+ IBAN() + ", SWIFT: " +swiftCode() + ", balance: " + balance);
+		return ("Account name: \t" + accountName + "\n"+ "Account number: " + accountNumber + "\n"+ "Sort code: \t\t" + SORT_CODE
+				+ "\n"+ "IBAN:\t\t\t"+ IBAN() + "\n" + "SWIFT: \t\t\t" + swiftCode() + "\n"+ "Balance: \t\t" + balance + "\n");
 	}
 
 
