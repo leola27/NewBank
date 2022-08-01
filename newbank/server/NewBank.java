@@ -74,7 +74,7 @@ public class NewBank {
 		//if(customers.containsKey(customer.getKey())) {
 			String[] words = request.split(" ");
 			if(words.length == 0){
-				return "FAIL";
+				return "PLEASE ENTER A COMMAND";
 			}
 			switch(words[0]) {
 				case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
@@ -85,7 +85,7 @@ public class NewBank {
 				case "MOVE": return move(words, customer);
 				case "TRANSACTIONHISTORY": return printTransactionHistory(customer);
 //					return initialiseOfferLoan(words, customer);
-				default : return "FAIL";
+				default : return "UNKNOWN COMMAND PLEASE TRY AGAIN";
 			}
 		}
 		return "FAIL";
