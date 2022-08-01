@@ -50,6 +50,12 @@ public class NewBankClientHandler extends Thread {
 					if (customer != null) {
 						out.println("Log In Successful.");
 						while (customer != null) {
+							out.println("Here is the menu:" +"\nSHOWMYACCOUNTS - lists all accounts"
+									+"\nNEWACCOUNT <AccountType> - adds new account for current customer"
+									+"\nLOANHISTORY - shows the loans of current customer"
+									+"\nPAY <Customer> <Amount> - pay another customer a different amount"
+									+"\nMOVE <Amount> <From> <To>  - move money between your own accounts"
+									+"\nTRANSACTIONHISTORY - show history of your transactions");
 							out.println("What do you want to do?");
 							String request = in.readLine();
 
