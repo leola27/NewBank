@@ -76,10 +76,11 @@ public class NewBank {
 			if(words.length == 0){
 				return "PLEASE ENTER A COMMAND";
 			}
-			switch(words[0]) {
+			switch(words[0].toUpperCase()) {
 				case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 				case "NEWACCOUNT": return accountCreationReview(words, customer);
 				case "REQUESTLOAN": return loanReview(words, customer);
+				case "REPAYLOAN": return repay10percOfLoan(words, customer);
 				case "LOANHISTORY" : return loanHistory(words, customer);
 				case "PAY": return pay(words, customer);
 				case "MOVE": return move(words, customer);
@@ -130,6 +131,15 @@ public class NewBank {
 		}
 		return "FAIL";
 	}
+
+	private synchronized String repay10percOfLoan(String[] words, CustomerID customerID) {
+		Customer customer = customers.get(customerID.getKey());
+		if (customer.repay10percOfLoan("Main")) {
+			return "SUCCESS";
+		}
+		return "FAIL";
+	}
+
 
 
 	private synchronized String loanReview(String[] words, CustomerID customerID) {
@@ -187,7 +197,7 @@ public class NewBank {
 				Account receiverAccount = null;
 				// first, check if the receivingCustomer matches a customer name
 				if(customers.containsKey(receivingCustomer)){
-					receiver =  customers.get(receivingCustomer);
+					receiver =  customers.get(receivingCustomer.toLowerCase());
 					if(receiver.hasAccount("Main")){
 						receiverAccount = receiver.getAccount("Main");
 					}
