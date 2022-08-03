@@ -38,7 +38,14 @@ public class Loans {
     public String loanHistory(){
         return "Loan amount: " + loanAmount + "\nPaid: " + loanPaid + "\nRemaining balance: " + getLoanBalance();
     }
+    
+    public double getMonthlyInterestRate(){
+        return monthlyInterestRate;
+    }
 
+    public int getNumberOfYears(){
+        return numberOfYears;
+    }
 
 
 }
