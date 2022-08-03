@@ -75,12 +75,16 @@ public class Customer {
 	}
 
 	public boolean addLoan(double amountRequested){
+		Transaction transaction = new Transaction("LOAN", amountRequested, "NewBank", username);
+		addTransaction(transaction);
 		double maxAmount = getAccount("Main").getBalance() * 3;
-		if (amountRequested >= maxAmount){
+		if (amountRequested >= maxAmount || loan != null){
+			transaction.setStatus("FAIL");
 			return false;
 		}
 		getAccount("Main").deposit(amountRequested);
 		loan = new Loans(amountRequested);
+		transaction.setStatus("SUCCESS");
 		return true;
 	}
 
@@ -90,21 +94,31 @@ public class Customer {
 		}
 		return loan.loanHistory();
 	}
+	public boolean repay10percOfLoan(String accountName){
+		return repayLoan(accountName, loan.getLoanBalance() / 10);
+	}
 
-	public boolean repayLoan(String accountName, double monthlyLoanRepayment){//adapted the repayLoan function to use the monthly loan repayment formula
+	public boolean repayLoan(String accountName, double amount){
+		Transaction transaction = new Transaction("LOAN_REPAYMENT", amount, username, "NewBank");
+		addTransaction(transaction);
 		Account main = getAccount(accountName);
-		monthlyLoanRepayment = (main.getBalance() * loan.getMonthlyInterestRate() / (1 -
-		(1 / Math.pow(1 + loan.getMonthlyInterestRate(), loan.getNumberOfYears() * 12))));
+		// amount = (main.getBalance() * loan.getMonthlyInterestRate() / (1 -
+		//(1 / Math.pow(1 + loan.getMonthlyInterestRate(), loan.getNumberOfYears() * 12))));
+
 		if(loan == null || !hasAccount(accountName)){
+			transaction.setStatus("FAIL");
 			return false;
 		}
-		LocalDate todaysDate = LocalDate.now();
-		if(todaysDate == LocalDate.now().withDayOfMonth( 1) && main.getBalance() > monthlyLoanRepayment && loan.getLoanBalance() > monthlyLoanRepayment){
-		    main.withdraw(monthlyLoanRepayment);
-		    loan.repay(monthlyLoanRepayment);// pay back loan at the start of every month
-		    return true;
+		//LocalDate todaysDate = LocalDate.now();
+		// todaysDate == LocalDate.now().withDayOfMonth( 1) &&
+		if( main.getBalance() > amount && loan.getLoanBalance() > amount){
+		    main.withdraw(amount);
+		    loan.repay(amount);// pay back loan
+			transaction.setStatus("SUCCESS");
+			return true;
 		}
-			return false;
+		transaction.setStatus("FAIL");
+		return false;
 		
 
 

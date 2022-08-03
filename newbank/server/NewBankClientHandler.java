@@ -30,7 +30,7 @@ public class NewBankClientHandler extends Thread {
 			while (true) {
 				// ask for user name
 				out.println("Enter Username");
-				String userName = in.readLine();
+				String userName = in.readLine().toLowerCase();
 				userName = userName.toLowerCase().replaceAll(" ", "");
 				// ask for password
 				out.println("Enter Password");
@@ -53,6 +53,8 @@ public class NewBankClientHandler extends Thread {
 							out.println("Here is the menu:" +"\nSHOWMYACCOUNTS - lists all accounts"
 									+"\nNEWACCOUNT <AccountType> - adds new account for current customer"
 									+"\nLOANHISTORY - shows the loans of current customer"
+									+"\nREQUESTLOAN <Amount> - requests a loan"
+									+"\nREPAYLOAN - Repay 10% of the loan"
 									+"\nPAY <Customer> <Amount> - pay another customer a different amount"
 									+"\nMOVE <Amount> <From> <To>  - move money between your own accounts"
 									+"\nTRANSACTIONHISTORY - show history of your transactions");
