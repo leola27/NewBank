@@ -6,6 +6,7 @@ import newbank.server.Loans;
 import newbank.server.Transaction.Transaction;
 import newbank.server.Transaction.TransactionHistory;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -90,18 +91,24 @@ public class Customer {
 		return loan.loanHistory();
 	}
 
-	public boolean repayLoan(String accountName, double amount){
+	public boolean repayLoan(String accountName, double monthlyLoanRepayment){//adapted the repayLoan function to use the monthly loan repayment formula
+		Account main = getAccount(accountName);
+		monthlyLoanRepayment = (main.getBalance() * loan.getMonthlyInterestRate() / (1 -
+		(1 / Math.pow(1 + loan.getMonthlyInterestRate(), loan.getNumberOfYears() * 12))));
 		if(loan == null || !hasAccount(accountName)){
 			return false;
 		}
-		Account main = getAccount(accountName);
-		if(main.getBalance() < amount || loan.getLoanBalance() < amount){
-			return false;
+		LocalDate todaysDate = LocalDate.now();
+		if(todaysDate == LocalDate.now().withDayOfMonth( 1) && main.getBalance() > monthlyLoanRepayment && loan.getLoanBalance() > monthlyLoanRepayment){
+		    main.withdraw(monthlyLoanRepayment);
+		    loan.repay(monthlyLoanRepayment);// pay back loan at the start of every month
+		    return true;
 		}
-		main.withdraw(amount);
-		loan.repay(amount);
-		return true;
-	}
+			return false;
+		
+
+
+		}
 
 	public boolean moveMoney(double amount, String fromAccountName, String toAccountName){
 		if (hasAccount(fromAccountName) && hasAccount(toAccountName)) {
