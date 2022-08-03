@@ -57,7 +57,10 @@ public class NewBankClientHandler extends Thread {
 									+"\nREPAYLOAN - Repay 10% of the loan"
 									+"\nPAY <Customer> <Amount> - pay another customer a different amount"
 									+"\nMOVE <Amount> <From> <To>  - move money between your own accounts"
-									+"\nTRANSACTIONHISTORY - show history of your transactions");
+									+"\nTRANSACTIONHISTORY - show history of your transactions"
+									+"\nSTANDINGORDER <Payee> <Amount> <Frequency>  - Creates a new standing order that will pay in specified intervals"
+									+"\nCHECKSTANDINGORDERS - Shows all current Standing Orders"
+									+"\nDELETESTANDINGORDER <id> - Deletes selected Standing Order");
 							out.println("What do you want to do?");
 							String request = in.readLine();
 

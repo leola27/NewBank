@@ -53,7 +53,7 @@ public class Connect {
             Statement stmt = conn.createStatement();
 
             System.out.println("Connection to SQLite has been established.");
-            stmt.executeQuery(Query);
+            stmt.executeUpdate(Query);
 
         } catch (SQLException | ClassNotFoundException e) {
             System.out.println(e.getMessage());

@@ -2,6 +2,8 @@ package newbank.server;
 
 import newbank.server.Customer.Customer;
 import newbank.server.Customer.CustomerID;
+import newbank.server.StandingOrders.SOHandler;
+import newbank.server.StandingOrders.StandingOrder;
 import newbank.server.sqlite.connect.net.src.Connect;
 // import java.util.Objects;
 import newbank.server.Transaction.Transaction;
@@ -85,6 +87,9 @@ public class NewBank {
 				case "PAY": return pay(words, customer);
 				case "MOVE": return move(words, customer);
 				case "TRANSACTIONHISTORY": return printTransactionHistory(customer);
+				case "STANDINGORDER" : return createStandingOrder(words, customer);
+				case "CHECKSTANDINGORDERS" : return new SOHandler(customer).checkStandingOrders();
+				case "DELETESTANDINGORDER" : return new SOHandler(customer).deleteStandingOrder(customer, words);
 //					return initialiseOfferLoan(words, customer);
 				default : return "UNKNOWN COMMAND PLEASE TRY AGAIN";
 			}
@@ -308,6 +313,17 @@ public class NewBank {
 
 	public void addCustomer(String customerName, Customer customer){
 		customers.put(customerName, customer);
+	}
+
+
+	private synchronized String createStandingOrder(String[] words, CustomerID customerID) {
+		try {
+			return new SOHandler(new StandingOrder(words, customerID), customerID).createNewStandingOrder();
+		}
+		catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+			e.printStackTrace();
+		}
+		return "FAIL";
 	}
 
 }
