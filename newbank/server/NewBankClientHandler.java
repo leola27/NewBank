@@ -9,18 +9,34 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NewBankClientHandler extends Thread {
 
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
-	int loginAttempts = 3;
+	private int loginAttempts = 3;
+	private boolean userIsInactive = false;
+	public static Timer timer;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
 		in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		out = new PrintWriter(s.getOutputStream(), true);
+	}
+
+	public void setInactivityTimer() {
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				userIsInactive = true;
+				out.println("You've been logged out from inactivity, hit return to log back in");
+			}
+		};
+		timer = new Timer();
+		timer.schedule(task, 30000);
 	}
 
 	public void run() {
@@ -46,25 +62,28 @@ public class NewBankClientHandler extends Thread {
 						System.out.println(t.getName());
 					}
 					CustomerID customer = bank.checkLogInDetails(userName, password);
+
 					// if the user is authenticated then get requests from the user and process them
 					if (customer != null) {
 						out.println("Log In Successful.");
 						while (customer != null) {
-							out.println("Here is the menu:" +"\nSHOWMYACCOUNTS - lists all accounts"
-									+"\nNEWACCOUNT <AccountType> - adds new account for current customer"
-									+"\nLOANHISTORY - shows the loans of current customer"
-									+"\nREQUESTLOAN <Amount> - requests a loan"
-									+"\nREPAYLOAN - Repay 10% of the loan"
-									+"\nPAY <Customer> <Amount> - pay another customer a different amount"
-									+"\nMOVE <Amount> <From> <To>  - move money between your own accounts"
-									+"\nTRANSACTIONHISTORY - show history of your transactions"
-									+"\nSTANDINGORDER <Payee> <Amount> <Frequency>  - Creates a new standing order that will pay in specified intervals"
-									+"\nCHECKSTANDINGORDERS - Shows all current Standing Orders"
-									+"\nDELETESTANDINGORDER <id> - Deletes selected Standing Order");
+
+							out.println("Here is the menu:" + "\nSHOWMYACCOUNTS - lists all accounts"
+									+ "\nNEWACCOUNT <AccountType> - adds new account for current customer"
+									+ "\nLOANHISTORY - shows the loans of current customer"
+									+ "\nREQUESTLOAN <Amount> - requests a loan"
+									+ "\nREPAYLOAN - Repay 10% of the loan"
+									+ "\nPAY <Customer> <Amount> - pay another customer a different amount"
+									+ "\nMOVE <Amount> <From> <To>  - move money between your own accounts"
+									+ "\nTRANSACTIONHISTORY - show history of your transactions"
+									+ "\nSTANDINGORDER <Payee> <Amount> <Frequency>  - Creates a new standing order that will pay in specified intervals"
+									+ "\nCHECKSTANDINGORDERS - Shows all current Standing Orders"
+									+ "\nDELETESTANDINGORDER <id> - Deletes selected Standing Order");
 							out.println("What do you want to do?");
+							setInactivityTimer();
 							String request = in.readLine();
 
-							if (request.equals("LOGOUT")) {
+							if (request.equals("LOGOUT") || userIsInactive) {
 								customer = null;
 							} else {
 								System.out.println("Request from " + customer.getKey());
@@ -92,7 +111,7 @@ public class NewBankClientHandler extends Thread {
 						String accountName = in.readLine();
 						Customer newCustomer = new Customer(userName, password, accountName,
 								bank.newAccountNumber(), 0);
-						//newCustomer.addNewCustomerToDb(userName, password);
+						// newCustomer.addNewCustomerToDb(userName, password);
 						bank.addCustomer(userName, newCustomer);
 						out.println("Success, please login with your new account");
 					} else {
