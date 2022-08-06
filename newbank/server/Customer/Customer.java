@@ -114,7 +114,7 @@ public class Customer {
 		// todaysDate == LocalDate.now().withDayOfMonth( 1) &&
 		if( main.getBalance() > amount && loan.getLoanBalance() > amount){
 			main.withdraw(amount);
-		loan.repay(amount);// pay back loan
+			loan.repay(amount);// pay back loan
 			transaction.setStatus("SUCCESS");
 			return true;
 		}
