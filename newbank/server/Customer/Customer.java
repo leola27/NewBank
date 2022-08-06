@@ -113,8 +113,8 @@ public class Customer {
 		//LocalDate todaysDate = LocalDate.now();
 		// todaysDate == LocalDate.now().withDayOfMonth( 1) &&
 		if( main.getBalance() > amount && loan.getLoanBalance() > amount){
-		    main.withdraw(amount);
-		    loan.repay(amount);// pay back loan
+				main.withdraw(amount);
+				loan.repay(amount);// pay back loan
 			transaction.setStatus("SUCCESS");
 			return true;
 		}
@@ -161,9 +161,9 @@ public class Customer {
 		return accounts.values();
 	}
 
-  public double getDebtBalance(){
-    return loan.getLoanBalance();
-  }
+	public double getDebtBalance(){
+		return loan.getLoanBalance();
+	}
 
 
 	// -- Kameira to complete the below functions --
