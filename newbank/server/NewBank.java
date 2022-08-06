@@ -139,19 +139,31 @@ public class NewBank {
 
 	private synchronized String repay10percOfLoan(String[] words, CustomerID customerID) {
 		Customer customer = customers.get(customerID.getKey());
+    Transaction transaction = new Transaction("LOAN", customer.getDebtBalance() / 10, customer.getName(), "NewBank");
+
 		if (customer.repay10percOfLoan("Main")) {
+      transaction.setStatus("SUCCESS");
+      customer.addTransaction(transaction);
 			return "SUCCESS";
 		}
+
+    transaction.setStatus("FAIL");
+    customer.addTransaction(transaction);
 		return "FAIL";
 	}
 
 
 
 	private synchronized String loanReview(String[] words, CustomerID customerID) {
+    double amountRequested = Double.parseDouble(words[1]);
+    Customer customer = customers.get(customerID.getKey());
+    Transaction transaction = new Transaction("LOAN", amountRequested, "NewBank", customer.getName());
+
 		try {
-			double amountRequested = Double.parseDouble(words[1]);
-			Customer customer = customers.get(customerID.getKey());
 			if(customer.addLoan(amountRequested)){
+        transaction.setStatus("SUCCESS");
+        customer.addTransaction(transaction);
+
 				return "SUCCESS";
 			}
 			else {
@@ -161,6 +173,9 @@ public class NewBank {
 		catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
 			e.printStackTrace();
 		}
+
+    transaction.setStatus("FAIL");
+    customer.addTransaction(transaction);
 		return "FAIL";
 	}
 
@@ -280,18 +295,26 @@ public class NewBank {
 	}
 
 	private String move(String[] words, CustomerID customer) {
-		try {
-			double amount = Double.parseDouble(words[1]);
-			String fromAccountName = words[2];
-			String toAccountName = words[3];
+    double amount = Double.parseDouble(words[1]);
+    String fromAccountName = words[2];
+    String toAccountName = words[3];
 
-			Customer sender = customers.get(customer.getKey());
+    Customer sender = customers.get(customer.getKey());
+    Transaction transaction = new Transaction("MOVE", amount, fromAccountName, toAccountName);
+
+		try {
 			if (toAccountName.equalsIgnoreCase("LOAN")) {
 				if (sender.repayLoan(fromAccountName, amount)) {
+          transaction.setStatus("SUCCESS");
+          sender.addTransaction(transaction);
+
 					return "SUCCESS";
 				}
 			}
 			else if (sender.moveMoney(amount, fromAccountName, toAccountName)) {
+        transaction.setStatus("SUCCESS");
+        sender.addTransaction(transaction);
+
 				return "SUCCESS";
 			}
 
@@ -299,8 +322,12 @@ public class NewBank {
 			e.printStackTrace();
 		}
 
+    transaction.setStatus("FAIL");
+    sender.addTransaction(transaction);
+
 		return "FAIL";
 	}
+
 	private String printTransactionHistory(CustomerID customerID) {
 		try {
 			Customer customer = customers.get(customerID.getKey());

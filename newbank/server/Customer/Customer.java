@@ -94,6 +94,7 @@ public class Customer {
 		}
 		return loan.loanHistory();
 	}
+
 	public boolean repay10percOfLoan(String accountName){
 		return repayLoan(accountName, loan.getLoanBalance() / 10);
 	}
@@ -119,7 +120,7 @@ public class Customer {
 		}
 		transaction.setStatus("FAIL");
 		return false;
-		
+
 
 
 		}
@@ -159,6 +160,10 @@ public class Customer {
 	public Collection<Account> getAccounts(){
 		return accounts.values();
 	}
+
+  public double getDebtBalance(){
+    return loan.getLoanBalance();
+  }
 
 
 	// -- Kameira to complete the below functions --
