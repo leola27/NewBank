@@ -20,6 +20,7 @@ public class NewBankClientHandler extends Thread {
 	private int loginAttempts = 3;
 	private boolean userIsInactive = false;
 	public static Timer timer;
+	private static TimerTask task;
 
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
@@ -28,7 +29,11 @@ public class NewBankClientHandler extends Thread {
 	}
 
 	public void setInactivityTimer() {
-		TimerTask task = new TimerTask() {
+		if (task != null) {
+			timer.cancel();
+			task.cancel();
+		}
+		task = new TimerTask() {
 			@Override
 			public void run() {
 				userIsInactive = true;
@@ -49,6 +54,7 @@ public class NewBankClientHandler extends Thread {
 				String userName = in.readLine().toLowerCase();
 				userName = userName.toLowerCase().replaceAll(" ", "");
 				// ask for password
+				userIsInactive = false;
 				out.println("Enter Password");
 				String password = in.readLine();
 				out.println("Checking Details...");
@@ -82,7 +88,7 @@ public class NewBankClientHandler extends Thread {
 							out.println("What do you want to do?");
 							setInactivityTimer();
 							String request = in.readLine();
-
+							setInactivityTimer();
 							if (request.equals("LOGOUT") || userIsInactive) {
 								customer = null;
 							} else {
