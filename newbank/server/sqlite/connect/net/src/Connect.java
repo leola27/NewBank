@@ -10,7 +10,7 @@ public class Connect {
     /**
      * Connect to a sample database
      */
-    public static String connectSelect(String Query, String column ) {
+    public static String connectSelect(String Query, String column) {
         Connection conn = null;
         String result = null;
 
@@ -40,7 +40,37 @@ public class Connect {
         return result;
     }
 
-    public static String connectInsert(String Query, String column ) {
+    public static ResultSet connectSelectResultSet(String Query) {
+        Connection conn = null;
+        ResultSet rs = null;
+
+        try {
+            // db parameters
+            Class.forName("org.sqlite.JDBC");
+            String url = "jdbc:sqlite:sqlite/db/NewBankDb.db";
+            // create a connection to the database
+            conn = DriverManager.getConnection(url);
+            Statement stmt = conn.createStatement();
+
+            System.out.println("Connection to SQLite has been established.");
+            rs = stmt.executeQuery(Query);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+//        } finally {
+//            try {
+//                if (conn != null) {
+////                    conn.close();
+//                }
+//            } catch (SQLException ex) {
+//                System.out.println(ex.getMessage());
+//            }
+//        }
+        return rs;
+    }
+
+        public static String connectInsert(String Query, String column ) {
         Connection conn = null;
         String result = null;
 
@@ -66,6 +96,7 @@ public class Connect {
                 System.out.println(ex.getMessage());
             }
         }
+
         return result;
     }
 

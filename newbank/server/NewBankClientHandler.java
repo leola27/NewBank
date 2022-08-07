@@ -82,7 +82,7 @@ public class NewBankClientHandler extends Thread {
 									+ "\nPAY <Customer> <Amount> - pay another customer a different amount"
 									+ "\nMOVE <Amount> <From> <To>  - move money between your own accounts"
 									+ "\nTRANSACTIONHISTORY - show history of your transactions"
-									+ "\nSTANDINGORDER <Payee> <Amount> <Frequency>  - Creates a new standing order that will pay in specified intervals"
+									+ "\nSTANDINGORDER <Payee Account Number> <Amount> <Frequency (2m = 2 months, 1y = 1 year etc.)> \n - Creates a new standing order that will pay in specified intervals"
 									+ "\nCHECKSTANDINGORDERS - Shows all current Standing Orders"
 									+ "\nDELETESTANDINGORDER <id> - Deletes selected Standing Order");
 							out.println("What do you want to do?");
@@ -118,7 +118,7 @@ public class NewBankClientHandler extends Thread {
 						Customer newCustomer = new Customer(userName, password, accountName,
 								bank.newAccountNumber(), 0);
 						// newCustomer.addNewCustomerToDb(userName, password);
-						bank.addCustomer(userName, newCustomer);
+//						bank.addCustomer(userName, newCustomer);
 						out.println("Success, please login with your new account");
 					} else {
 						out.println("Please try again");
