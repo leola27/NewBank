@@ -309,7 +309,7 @@ public class NewBank {
 					// if the customer is not found, check to see if it's a valid IBAN (for international payments)
 //					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receivingCustomer);
 
-					Transaction transaction = new Transaction(new Account(sender.getName()).getAccountNumber(), "PAY", amount, "PENDING", new Account(receivingCustomer).getAccountNumber());
+					Transaction transaction = new Transaction(sender.getAccount("Main").getAccountNumber(), "PAY", amount, "PENDING", new Account(receivingCustomer).getAccountNumber());
 
 					if(isValidIBAN(receivingCustomer)){
 						// we only need to withdraw from the sender (as the receiver is not one of the bank's customers)

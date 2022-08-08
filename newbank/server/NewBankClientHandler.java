@@ -36,8 +36,10 @@ public class NewBankClientHandler extends Thread {
 		task = new TimerTask() {
 			@Override
 			public void run() {
-				userIsInactive = true;
-				out.println("You've been logged out from inactivity, hit return to log back in");
+				if(!userIsInactive) {
+					userIsInactive = true;
+					out.println("You've been logged out from inactivity, hit return to log back in");
+				}
 			}
 		};
 		timer = new Timer();
@@ -80,6 +82,7 @@ public class NewBankClientHandler extends Thread {
 									+ "\nREQUESTLOAN <Amount> - requests a loan"
 									+ "\nREPAYLOAN - Repay 10% of the loan"
 									+ "\nPAY <Customer> <Amount> - pay another customer a different amount"
+									+ "\nPAY <IBAN> <Amount> - pay another customer with IBAN number"
 									+ "\nMOVE <Amount> <From> <To>  - move money between your own accounts"
 									+ "\nTRANSACTIONHISTORY - show history of your transactions"
 									+ "\nSTANDINGORDER <Payee Account Number> <Amount> <Frequency (2m = 2 months, 1y = 1 year etc.)> \n - Creates a new standing order that will pay in specified intervals"
