@@ -4,8 +4,8 @@ import newbank.server.Customer.Customer;
 import newbank.server.Customer.CustomerID;
 import newbank.server.StandingOrders.SOHandler;
 import newbank.server.StandingOrders.StandingOrder;
+import newbank.server.Transaction.TransactionHistory;
 import newbank.server.sqlite.connect.net.src.Connect;
-// import java.util.Objects;
 import newbank.server.Transaction.Transaction;
 
 import java.util.HashMap;
@@ -14,23 +14,11 @@ import java.util.Random;
 public class NewBank {
 
 	private static final NewBank bank = new NewBank();
-	private HashMap<String, Customer> customers;
 	Connect connection = new Connect();
 	private boolean isValidCustomer;
 
 	private NewBank() {
-		customers = new HashMap<>();
 		isValidCustomer = true; // Temporary solution for testing
-		addTestData();
-	}
-
-	private void addTestData() {
-		customers.put("bhagy", new Customer("bhagy", "1234", "Main",
-				12345678, 1000.0));
-		customers.put("christina", new Customer("christina", "abcd", "Main",
-				29837279, 1500.0));
-		customers.put("john", new Customer("john", "password", "Main",
-				23190586, 250.0));
 	}
 
 	public static NewBank getBank() {
@@ -38,7 +26,8 @@ public class NewBank {
 	}
 
 	public synchronized boolean isCustomer(String userName) {
-		return customers.containsKey(userName);
+//		return customers.containsKey(userName);
+		return Connect.connectSelect("SELECT * from Customers WHERE Name = " + "\"" + userName + "\"", "CustomerID") != null;
 	}
 
 
@@ -50,8 +39,13 @@ public class NewBank {
 	// 	return isValidCustomer;
 	// }
 
-	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword)
-	{
+	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword) {
+		String dbPassword = Connect.connectSelect("SELECT * from Customers WHERE Name =" + "\"" + userName + "\"", "Password");
+		if (dbPassword.equals(givenPassword)) {
+			return new CustomerID(Connect.connectSelect("SELECT * from Customers WHERE Name = " + "\"" + userName + "\"", "CustomerID"));
+		}
+		return null;
+
 		// if (isValidCustomer)
 		// {
 		// 	//Customer customer = customers.get(userName);
@@ -61,65 +55,76 @@ public class NewBank {
 		// 		return new CustomerID(userName);
 		// 	}
 		// }
-		if(customers.containsKey(userName)) {
-			Customer customer = customers.get(userName);
-			if(customer.CheckPassword(givenPassword)) {
-				return new CustomerID(userName);
-			}
-		}
-		return null;
+//		if(customers.containsKey(userName)) {
+//			Customer customer = customers.get(userName);
+//			if(customer.CheckPassword(givenPassword)) {
+//				return new CustomerID(userName);
+//			}
+//		}
+//		return null;
 	}
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
-		if(isValidCustomer) {
+//		if(isValidCustomer) {
 		//if(customers.containsKey(customer.getKey())) {
 			String[] words = request.split(" ");
 			if(words.length == 0){
 				return "PLEASE ENTER A COMMAND";
 			}
 			switch(words[0].toUpperCase()) {
-				case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-				case "NEWACCOUNT": return accountCreationReview(words, customer);
-				case "REQUESTLOAN": return loanReview(words, customer);
-				case "REPAYLOAN": return repay10percOfLoan(words, customer);
-				case "LOANHISTORY" : return loanHistory(words, customer);
+				case "SHOWMYACCOUNTS" : return showMyAccounts(customer); //DB integration done
+				case "NEWACCOUNT": return accountCreationReview(words, customer); //DB integration done
+				case "REQUESTLOAN": return loanReview(words, customer); //DB integration done
+				case "REPAYLOAN": return repay10percOfLoan(words, customer); //DB integration done
+				case "LOANHISTORY" : return loanHistory(words, customer); //DB integration done
 				case "PAY": return pay(words, customer);
 				case "MOVE": return move(words, customer);
-				case "TRANSACTIONHISTORY": return printTransactionHistory(customer);
+				case "TRANSACTIONHISTORY": return printTransactionHistory(customer); //DB integration done
 				case "STANDINGORDER" : return createStandingOrder(words, customer);
 				case "CHECKSTANDINGORDERS" : return new SOHandler(customer).checkStandingOrders();
 				case "DELETESTANDINGORDER" : return new SOHandler(customer).deleteStandingOrder(customer, words);
 //					return initialiseOfferLoan(words, customer);
 				default : return "UNKNOWN COMMAND PLEASE TRY AGAIN";
 			}
-		}
-		return "FAIL";
+//		}
+//		return "FAIL";
 	}
 
 	public int newAccountNumber(){
-		boolean usedAccountNumber = false;
-		int accountNumber;
-		do{
-			// generate a random account number
-			Random random = new Random();
+		Random random = new Random();
+		int accountNumber = random.nextInt(10000000, 99999999);
+		while (Connect.connectSelect("SELECT * FROM Accounts WHERE AccountNumber = " + "\"" + accountNumber + "\"", "AccountNumber") != null) {
 			accountNumber = random.nextInt(10000000, 99999999);
-			// check if the account number is taken
-			for(Customer customer1: customers.values()){
-				for(Account account: customer1.getAccounts()){
-					if(account.getAccountNumber() == accountNumber){
-						usedAccountNumber = true;
-						break;
-					}
-				}
-			}
-		}while (usedAccountNumber);  // if it is taken, try another random account number
+		}
 		return accountNumber;
+
+
+//		boolean usedAccountNumber = false;
+//		int accountNumber;
+//		do{
+//			// generate a random account number
+//			Random random = new Random();
+//			accountNumber = random.nextInt(10000000, 99999999);
+//			// check if the account number is taken
+//			for(Customer customer1: customers.values()){
+//				for(Account account: customer1.getAccounts()){
+//					if(account.getAccountNumber() == accountNumber){
+//						usedAccountNumber = true;
+//						break;
+//					}
+//				}
+//			}
+//
+//		}
+//		while (usedAccountNumber);  // if it is taken, try another random account number
+//		return accountNumber;
 	}
 
 	private synchronized String accountCreationReview(String[] words, CustomerID customer) {
 		try {
-			return Account.newAccount(customers.get(customer.getKey()), words[1], newAccountNumber());
+			return Account.newAccount(customer, words[1], newAccountNumber());
+//			return Account.newAccount(customers.get(customer.getKey()), words[1], newAccountNumber());
 		}
 		catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			e.printStackTrace();
@@ -128,8 +133,9 @@ public class NewBank {
 	}
 	private synchronized String loanHistory(String[] words, CustomerID customerID) {
 		try {
-			Customer customer = customers.get(customerID.getKey());
-			return customer.loanHistory();
+//			Customer customer = customers.get(customerID.getKey());
+//			return customer.loanHistory();
+			return new Customer(customerID.getKey()).loanHistory();
 		}
 		catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			e.printStackTrace();
@@ -138,8 +144,10 @@ public class NewBank {
 	}
 
 	private synchronized String repay10percOfLoan(String[] words, CustomerID customerID) {
-		Customer customer = customers.get(customerID.getKey());
-		Transaction transaction = new Transaction("LOAN", customer.getDebtBalance() / 10, customer.getName(), "NewBank");
+//		Customer customer = customers.get(customerID.getKey());
+		Customer customer = new Customer(customerID.getKey());
+//		Transaction transaction = new Transaction("LOAN", customer.getDebtBalance() / 10, customer.getName(), "NewBank");
+		Transaction transaction = new Transaction(new Account(customerID.getKey(), "Main").getAccountNumber(), "LOAN", customer.getDebtBalance() / 10, "PENDING");
 
 		if (customer.repay10percOfLoan("Main")) {
 			transaction.setStatus("SUCCESS");
@@ -152,13 +160,12 @@ public class NewBank {
 		return "FAIL";
 	}
 
-
-
 	private synchronized String loanReview(String[] words, CustomerID customerID) {
 		double amountRequested = Double.parseDouble(words[1]);
-		Customer customer = customers.get(customerID.getKey());
-		Transaction transaction = new Transaction("LOAN", amountRequested, "NewBank", customer.getName());
-
+//		Customer customer = customers.get(customerID.getKey());
+		Customer customer = new Customer(customerID.getKey());
+//		Transaction transaction = new Transaction("LOAN", amountRequested, "NewBank", customer.getName());
+		Transaction transaction = new Transaction(new Account(customerID.getKey(), "Main").getAccountNumber(), "LOAN", amountRequested, "PENDING");
 		try {
 			if(customer.addLoan(amountRequested)){
 				transaction.setStatus("SUCCESS");
@@ -179,8 +186,18 @@ public class NewBank {
 		return "FAIL";
 	}
 
-	private String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
+
+
+
+
+
+
+
+	private String showMyAccounts(CustomerID customerID) {
+		return new Account(customerID.getKey()).getAllAccounts();
+
+
+//		return (customers.get(customer.getKey())).accountsToString();
 	}
 
 	private boolean isValidIBAN(String string){
@@ -209,39 +226,59 @@ public class NewBank {
 			String receivingCustomer = words[1];
 			double amount = Double.parseDouble(words[2]);
 
-			Customer sender = customers.get(customer.getKey());
+//			Customer sender = customers.get(customer.getKey());
+			Customer sender = new Customer(customer.getKey());
 
 			if (sender.hasAccount("Main") ) {
 				Account senderMain = sender.getAccount("Main");
 				Customer receiver = null;
 				Account receiverAccount = null;
 				// first, check if the receivingCustomer matches a customer name
-				if(customers.containsKey(receivingCustomer)){
-					receiver =  customers.get(receivingCustomer.toLowerCase());
+//				if(customers.containsKey(receivingCustomer)){
+
+				if((Connect.connectSelect("SELECT * FROM Customers WHERE Name = " + "\"" + receivingCustomer + "\"", "Name"))!= null){
+//					receiver =  customers.get(receivingCustomer.toLowerCase());
+					receiver = new Customer(Connect.connectSelect("SELECT * FROM Customers WHERE Name = " + "\"" + receivingCustomer + "\"", "CustomerID"));
 					if(receiver.hasAccount("Main")){
 						receiverAccount = receiver.getAccount("Main");
 					}
 				}
-				else{
+				else {
 					// if not, check if it matches an account number of an IBAN
-					for(Customer customer1: customers.values()){
-						for(Account account: customer1.getAccounts()){
-							// comparing both the account number and IBAN and see if one of them match
-							if(String.valueOf(account.getAccountNumber()).equals(receivingCustomer) ||
-									account.IBAN().equals(receivingCustomer)){
-								receiver = customer1;
-								receiverAccount = account;
-								break;
-							}
-						}
-						// if we found the receiver already, there is no point to continue looping, so break
-						if(receiverAccount != null){
-							break;
-						}
+//					for(Customer customer1: customers.values()){
+//						for(Account account: customer1.getAccounts()){
+//							// comparing both the account number and IBAN and see if one of them match
+//							if(String.valueOf(account.getAccountNumber()).equals(receivingCustomer) || account.IBAN().equals(receivingCustomer)){
+//								receiver = customer1;
+//								receiverAccount = account;
+//								break;
+//							}
+//						}
+
+					// if we found the receiver already, there is no point to continue looping, so break
+//					if(receiverAccount != null){
+//						break;
+//					}
+//				}
+
+					String findCustomer = Connect.connectSelect("SELECT * FROM Accounts WHERE AccountNumber = " + "\"" + receivingCustomer + "\"", "CustomerID");
+					String IBANAccount = Connect.connectSelect("SELECT * FROM Accounts WHERE IBAN = " + "\"" + receivingCustomer + "\"", "CustomerID");
+					if (findCustomer != null) {
+						receiver = new Customer(findCustomer);
 					}
+					if (IBANAccount != null) {
+						receiverAccount = new Account(IBANAccount, "Main");
+						receiver = new Customer(IBANAccount);
+					}
+
 				}
+
 				if(receiverAccount != null && receiver != sender) {
-					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
+//					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
+
+//					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receiver.getName());
+					Transaction transaction = new Transaction(sender.getAccount("Main").getAccountNumber(), "PAY", amount, "PENDING", receiverAccount.getAccountNumber());
+
 
 					Account receiverMain = receiver.getAccount("Main");
 
@@ -252,7 +289,10 @@ public class NewBank {
 						transaction.setStatus("SUCCESS");
 
 						sender.addTransaction(transaction);
-						receiver.addTransaction(transaction);
+//						receiver.addTransaction(transaction);
+
+						receiver.addTransaction(new Transaction(receiver.getAccount("Main").getAccountNumber(), "RECEIVE",
+								transaction.getValue(), "SUCCESS", transaction.getAccountNumber(), transaction.getTransactionID()));
 
 						return "SUCCESS";
 
@@ -267,8 +307,10 @@ public class NewBank {
 				}
 				else{
 					// if the customer is not found, check to see if it's a valid IBAN (for international payments)
-					Transaction transaction = new Transaction("PAY", amount, sender.getName(),
-							receivingCustomer);
+//					Transaction transaction = new Transaction("PAY", amount, sender.getName(), receivingCustomer);
+
+					Transaction transaction = new Transaction(new Account(sender.getName()).getAccountNumber(), "PAY", amount, "PENDING", new Account(receivingCustomer).getAccountNumber());
+
 					if(isValidIBAN(receivingCustomer)){
 						// we only need to withdraw from the sender (as the receiver is not one of the bank's customers)
 						senderMain.withdraw(amount);
@@ -294,14 +336,40 @@ public class NewBank {
 		return "FAIL";
 	}
 
+	private String move(String[] words, CustomerID customer, String testingOther) {
+		try {
+			double amount = Double.parseDouble(words[1]);
+			String fromAccountName = words[2];
+			String toAccountName = words[3];
+
+//			Customer sender = customers.get(customer.getKey());
+			Customer sender = new Customer(customer.getKey());
+			if (toAccountName.equalsIgnoreCase("LOAN")) {
+				if (sender.repayLoan(fromAccountName, amount)) {
+					return "SUCCESS";
+				}
+			}
+			else if (sender.moveMoney(amount, fromAccountName, toAccountName)) {
+				return "SUCCESS";
+			}
+
+		} catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+		return "FAIL";
+	}
+
 	private String move(String[] words, CustomerID customer) {
 		double amount = Double.parseDouble(words[1]);
 		String fromAccountName = words[2];
 		String toAccountName = words[3];
 
-		Customer sender = customers.get(customer.getKey());
-		Transaction transaction = new Transaction("MOVE", amount, fromAccountName, toAccountName);
-
+//			Customer sender = customers.get(customer.getKey());
+		Customer sender = new Customer(customer.getKey());
+//		Transaction transaction = new Transaction("MOVE", amount, fromAccountName, toAccountName);
+		Transaction transaction = new Transaction(new Account(customer.getKey(), fromAccountName).getAccountNumber(),
+				"MOVE", amount, toAccountName, new Account(customer.getKey(), toAccountName).getAccountNumber());
 		try {
 			if (toAccountName.equalsIgnoreCase("LOAN")) {
 				if (sender.repayLoan(fromAccountName, amount)) {
@@ -328,19 +396,25 @@ public class NewBank {
 		return "FAIL";
 	}
 
+
+
+
 	private String printTransactionHistory(CustomerID customerID) {
 		try {
-			Customer customer = customers.get(customerID.getKey());
-			return customer.allTransactionsToString();
+			return new TransactionHistory().allTransactionsToString(customerID.getKey());
+//			Customer customer = customers.get(customerID.getKey());
+//			return customer.allTransactionsToString();
 		} catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			e.printStackTrace();
 		}
 		return "FAIL";
 	}
 
-	public void addCustomer(String customerName, Customer customer){
-		customers.put(customerName, customer);
-	}
+
+
+//	public void addCustomer(String customerName, Customer customer){
+//		customers.put(customerName, customer);
+//	}
 
 
 	private synchronized String createStandingOrder(String[] words, CustomerID customerID) {
