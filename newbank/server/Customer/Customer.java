@@ -5,7 +5,9 @@ import newbank.server.Account;
 import newbank.server.Loans;
 import newbank.server.Transaction.Transaction;
 import newbank.server.Transaction.TransactionHistory;
+import org.mindrot.jbcrypt.BCrypt;
 
+import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -25,7 +27,7 @@ public class Customer {
 	public Customer(String userName, String password, String accountName, int accountNumber, double balance) {
 		this.username = userName;
 		this.password = password;
-
+		password = BCrypt.hashpw(password, BCrypt.gensalt());
 		Connect.connectInsert("INSERT INTO Customers (Name, Password) VALUES (\"" + userName + "\", \"" + password + "\")", "");
 		this.customerID = Connect.connectSelect("SELECT * FROM Customers WHERE Name = " + "\"" + userName + "\" AND Password = " + "\"" + password + "\"", "CustomerID");
 

@@ -7,6 +7,7 @@ import newbank.server.StandingOrders.StandingOrder;
 import newbank.server.Transaction.TransactionHistory;
 import newbank.server.sqlite.connect.net.src.Connect;
 import newbank.server.Transaction.Transaction;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -41,7 +42,7 @@ public class NewBank {
 
 	public synchronized CustomerID checkLogInDetails(String userName, String givenPassword) {
 		String dbPassword = Connect.connectSelect("SELECT * from Customers WHERE Name =" + "\"" + userName + "\"", "Password");
-		if (dbPassword.equals(givenPassword)) {
+		if (BCrypt.checkpw(givenPassword, dbPassword)) {
 			return new CustomerID(Connect.connectSelect("SELECT * from Customers WHERE Name = " + "\"" + userName + "\"", "CustomerID"));
 		}
 		return null;
