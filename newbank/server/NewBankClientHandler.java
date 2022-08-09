@@ -93,6 +93,8 @@ public class NewBankClientHandler extends Thread {
 							String request = in.readLine();
 							setInactivityTimer();
 							if (request.equals("LOGOUT") || userIsInactive) {
+								task.cancel();
+								timer.cancel();
 								customer = null;
 							} else {
 								System.out.println("Request from " + customer.getKey());
