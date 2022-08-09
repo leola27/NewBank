@@ -74,6 +74,7 @@ public class NewBankClientHandler extends Thread {
 					// if the user is authenticated then get requests from the user and process them
 					if (customer != null) {
 						out.println("Log In Successful.");
+						loginAttempts = 3;
 						while (customer != null) {
 
 							out.println("Here is the menu:" + "\nSHOWMYACCOUNTS - lists all accounts"
